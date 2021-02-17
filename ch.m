@@ -3,7 +3,7 @@ close()
 global A B L R S color
 
 ##=================== Cas test: ==============================================##
-## TP1: '1'                                                                   ##
+## TP1: '1'       test                                                            ##
 ## TP2: '2a' '2b' '2c' '2d'                                                   ##
 ## TP3: '2d' '3a' '3b' '3c'                                                   ##
 ##============================================================================##
@@ -15,12 +15,12 @@ test = 'grad'
 
 ##================ Simulateur ================================================##
 if test == '1'
-  ##=== Tracé de la chaine ===##
-  disp('tracé de la chaine');
+  ##=== TracÃ© de la chaine ===##
+  disp('tracÃ© de la chaine');
   chs(1,xy,[]);
 elseif test == '2'
   ##=== Energie potentielle et contraintes ======##
-  disp("calcul de l'énergie et des contraintes");
+  disp("calcul de l'Ã©nergie et des contraintes");
   [e,ce,ci,~,~,~,~,indic] = chs(2,xy,[])
 elseif test == '4'
   ##=== Gradient de e et jacobienne de c  =================##
@@ -32,8 +32,8 @@ elseif test == '5'
   [~,~,~,~,~,~,hl,indic] = chs(5,xy,[])
   full(hl)
 elseif test == 'grad'
-  ##=== Vérification du gradient de l'énergie potentielle ===##
-  disp("vérification du gradient de l'énergie potentielle"); 
+  ##=== VÃ©rification du gradient de l'Ã©nergie potentielle ===##
+  disp("vÃ©rification du gradient de l'Ã©nergie potentielle"); 
   verifierGradient(xy);
   ##=========================================================##
 end
@@ -48,16 +48,16 @@ options.verb = 1;
 if test == '0'
     
   ##=== Graphe de l'initialisation ===========================================##
-  figure('Name',['Méthode de Newton: cas test ',castest]);
+  figure('Name',['MÃ©thode de Newton: cas test ',castest]);
   hold on;
   color = [0,0.42,0.7];
   chs(1,xy,[]);
   
-  ##=== Résolution par l'optimiseur ==========================================##
+  ##=== RÃ©solution par l'optimiseur ==========================================##
   [x,lm,info] = sqp(@chs,xy,[],options);
     
-  ##=== calcul de la hessienne réduite =======================================##
-  disp("Calcul de la hessienne réduite")
+  ##=== calcul de la hessienne rÃ©duite =======================================##
+  disp("Calcul de la hessienne rÃ©duite")
   [~,ce,ci,g,ae,ai,~,indic] = chs(4,x,lm);
   [~,~,~,~,~,~,hl,indic] = chs(5,x,lm);
   
@@ -66,7 +66,7 @@ if test == '0'
     
   ##=== Conditions suffisantes d'ordre 2 =====================================##
   fprintf('---------------------------------\n');
-  fprintf('Vérification des CS2:\n');
+  fprintf('VÃ©rification des CS2:\n');
   fprintf('---------------------------------\n');
   fprintf('Grdl(x,lm) =\n');
   fprintf('%+25.5e\n',g+ae'*lm);
@@ -74,7 +74,7 @@ if test == '0'
   fprintf('c(x) =\n');
   fprintf('%+25.5e\n',ce);
   fprintf('---------------------------------\n');
-  fprintf("hl défini positif sur\n le noyau de c'(x)?\n");
+  fprintf("hl dÃ©fini positif sur\n le noyau de c'(x)?\n");
   fprintf('---------------------------------\n');
   %fprintf("Noyau de c'(x):\n");
   N = null(a)
@@ -89,16 +89,16 @@ if test == '0'
   ##=== Graphe de la solution ================================================##
   color = [0.83,0.35,0.17];
   chs(1,x,lm);
-  legend('Initialisation','résultat');
+  legend('Initialisation','rÃ©sultat');
   if test == 0
-    title({ ['Méthode de Newton: cas test  ',castest]; ...
+    title({ ['MÃ©thode de Newton: cas test  ',castest]; ...
             ['Nbr Iterations: ', num2str(info.niter)]; ...
-            "hl définie positive sur Ker(c'(x))"; "";"" });
+            "hl dÃ©finie positive sur Ker(c'(x))"; "";"" });
    
   else
-    title({ ['Méthode de Newton: cas test  ',castest]; ...
+    title({ ['MÃ©thode de Newton: cas test  ',castest]; ...
             ['Nbr Iterations: ', num2str(info.niter)]; ...
-            "hl non définie positive sur Ker(c'(x))"; "";"" });
+            "hl non dÃ©finie positive sur Ker(c'(x))"; "";"" });
   end
   
   print(["figure_", castest,"_",num2str(options.rl), ".jpg"]);  
