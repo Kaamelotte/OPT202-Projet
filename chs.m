@@ -12,11 +12,11 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic,xy,lme,lmi)
 ##        - g : gradient de e
 ##        - ae : jacobienne des contraintes d'egalite
 ##        - hl : hessien du lagrangien
-##        - indic : booléan du bon déroulement de la simulation
+##        - indic : booleen du bon deoulement de la simulation
 ##
 ################################################################################
   global A B L R S color
-  ##=== Test de consistance des arguments d'entrée ===========================##
+  ##=== Test de consistance des arguments d'entre ===========================##
   if mod(length(xy),2) ~= 0
       indic = -1 % length(xy) impair
       return  
@@ -24,7 +24,7 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic,xy,lme,lmi)
   ##==========================================================================##
   
   ##=== Variables utiles =====================================================##
-  nn = length(xy)/2; % nombre de noeuds intérieurs
+  nn = length(xy)/2; % nombre de noeuds inteieurs
   nb = nn+1; % nombre de barres
   p = length(R);
   
@@ -36,7 +36,7 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic,xy,lme,lmi)
   
   ##==========================================================================##
 
-  ##=== Tracé de la chaîne ===================================================##
+  ##=== Trace de la chaene ===================================================##
   if indic == 1
       plot([ 0; xp ], [ 0; yp ],'-o','linewidth',2, 'color',color);
       Longueur = sqrt((xp-xm).^2 + (yp-ym).^2);
@@ -70,7 +70,7 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic,xy,lme,lmi)
   
   ##=== Calcul de g, ae et ai ================================================##
     if indic == 4  
-      ##=== Gradient de l'énergie potentielle ===##
+      ##=== Gradient de l'energie potentielle ===##
       g = [ zeros(nn,1); (L(1:nb-1)+L(2:nb))/2 ];
       
       ##=== Jacobienne des contraintes ============================##
@@ -78,12 +78,10 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic,xy,lme,lmi)
       aey = spdiags([ [ (ym - yp)(2:nb) ;0], [yp-ym] ], -1:0, nb, nn);
       ae = sparse(2*[aex,aey]);
       
-      
-      %aix = reshape(repmat(S,nn,1),1,nn,p);
-      %size(aix)      
-      %aiy = repmat(-spdiags(ones(nn,1),0,nn,nn),p,1);
-      %size(aiy)
-      %ai = [ aix , aiy ];
+      aiy =full( repmat(-spdiags(ones(nn,1),0,nn,nn),p,1))
+	  aix= full(spdiags(repmat(S,nn,1), [0:-nn: -p*nn], p*nn , nn))
+	  
+      ai = [ aix , aiy ]
       
       
       indic = 0;
@@ -98,9 +96,9 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic,xy,lme,lmi)
   if indic == 5
     ##=== Calcul des multiplicateurs lagrangiens ===##
     if length(lm) == 0
-      [~,~,~,g,ae,ai,~,indic] = chs(4,xy,lm);
-      lme = -ae'\g;
-      lmi = -ai'\g;
+      [~,~,~,g, ae, ai,~,indic] = chs(4,xy,lm);
+      lme = -ae' \ g;
+      lmi = -ai' \ g;
     end
     ##==============================================##
     
