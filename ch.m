@@ -17,11 +17,11 @@ test = '0'
 
 ##================ Simulateur ================================================##
 switch test
-	case '1' ##=== Tracé de la chaine ===##	  
-	  disp('tracé de la chaine');
+	case '1' ##=== Trace de la chaine ===##	  
+	  disp('trace de la chaine');
 	  chs(1,xy,[], []);
 	case '2'  ##=== Energie potentielle et contraintes ======##
-	  disp("calcul de l'énergie et des contraintes");
+	  disp("calcul de l'energie et des contraintes");
 	  [e,ce,ci,~,~,~,~,indic] = chs(2,xy,[])
 	case '4'  ##=== Gradient de e et jacobienne de c  =================##
 		disp("calcul du gradient de e et de la jacobienne de c");
@@ -30,35 +30,37 @@ switch test
 		disp("calcul du hessien du lagrangien");
 		[~,~,~,~,~,~,hl,indic] = chs(5,xy,[])
 		full(hl)
-	case 'grad' ##=== Vérification du gradient de l'énergie potentielle ===##
-		disp("vérification du gradient de l'énergie potentielle"); 
+	case 'grad' ##=== Verification du gradient de l'energie potentielle ===##
+		disp("verification du gradient de l'energie potentielle"); 
 		verifierGradient(xy);
 end 
+
 ##============================================================================##
 
 ##================ Optimiseur ================================================##
 options.tol(1) = 1.e-8;
 options.tol(2) = 1.e-8;
 options.maxit = 100;
+
 options.rl = 0;
 options.verb = 2;
 if test == '0'    
 	##=== Graphe de l'initialisation ===========================================##
-	figure('Name',['Méthode de Newton: cas test ',castest]);
+	figure('Name',['Methode de Newton: cas test ',castest]);
 	color = [0,0.42,0.7];
 	hold on;
 	chs(1,xy,[]);
   
-	##=== Résolution par l'optimiseur ==========================================##
+	##=== Resolution par l'optimiseur ==========================================##
 	[x,lm,info] = sqp(@chs, xy, [], [], options);
     
 	##=== Graphe de la solution ================================================##
 	color = [0.83,0.35,0.17];
 	chs(1,x,lm, []);
 	chs(6,x,lm, []);
-	legend('Initialisation','résultat');
+	legend('Initialisation','resultat');
 
-	title({ ['Méthode de Newton: cas test  ',castest]; ...
+	title({ ['Methode de Newton: cas test  ',castest]; ...
 		['Nbr Iterations: ', num2str(info.niter)]; "";"" });
 
 	print(["figure_", castest,"_",num2str(options.rl), ".jpg"]);  
@@ -86,8 +88,8 @@ if test == '0'
 	
 	
 	if options.verb != 0
-		##=== calcul de la hessienne réduite =======================================##
-		disp("Calcul de la hessienne réduite")
+		##=== calcul de la hessienne reduite =======================================##
+		disp("Calcul de la hessienne reduite")
 		[~,ce,ci,g,ae,ai,~,indic] = chs(4,x,lm,[]);
 		[~,~,~,~,~,~,hl,indic] = chs(5,x,lm,[]);
 
@@ -96,7 +98,7 @@ if test == '0'
 
 		##=== Conditions suffisantes d'ordre 2 =====================================##
 		fprintf('---------------------------------\n');
-		fprintf('Vérification des CS2:\n');
+		fprintf('Verification des CS2:\n');
 		fprintf('---------------------------------\n');
 		fprintf('Grdl(x,lm) =\n');
 		fprintf('%+25.5e\n',g+ae'*lm);
@@ -104,7 +106,7 @@ if test == '0'
 		fprintf('c(x) =\n');
 		fprintf('%+25.5e\n',ce);
 		fprintf('---------------------------------\n');
-		fprintf("hl défini positif sur\n le noyau de c'(x)?\n");
+		fprintf("hl defini positif sur\n le noyau de c'(x)?\n");
 		fprintf('---------------------------------\n');
 		%fprintf("Noyau de c'(x):\n");
 		N = null(ae)
@@ -121,6 +123,7 @@ if test == '0'
   fprintf('%.5f, ',x(1:length(x)/2))
   fprintf('\n') 
   fprintf('%.5f, ',x(length(x)/2+1:length(x)))
+
   fprintf('\n')
 end
 ##============================================================================##
