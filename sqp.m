@@ -50,34 +50,15 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 	##================##  
 
 ##=== Boucle principale =======================================================##
-	while true
-		if options.verb == 1 ##=== Impression ===##
-			fprintf('%4d ',nbIter);
-		elseif options.verb == 2
-			fprintf('-----------------------------------------------------\n');
-			fprintf('iter %d, simul %d, ',nbIter,nbSimul);
-		end
-		##================##  
-		
+	while true		
 		[e,ce,ci,g,ae,ai,~,indic] = simul(4,x,lme);
 		nbSimul += 1;
 		grdl = g + ae' * lme;
 		
+		##===Quotient des normes des derives de Fk==================================##
 		normFkp = max(norm(ce,Inf),norm(grdl,Inf));
 		Q = normFkp / normFk^2;
 		normFk = normFkp;
-		
-		##=== Test d'optimalité =================================================##
-		if (norm(grdl,inf) < options.tol(1)) && (norm(ce,inf) < options.tol(2))
-			info.status = 0; #Solution trouvée
-			info.niter = nbIter; 
-		  
-			if options.verb == 1 ##=== Impression ===##
-				fprintf('%10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e\n',...
-					norm(grdl,inf),norm(ce,inf),norm(x,inf),norm(lme,inf),alpha,phi,Q);
-			end ##================##      
-			break; #Sortie de Newton
-		end##================================================================##
 		
 		##=== Calcul de la direction de descente ===================================##
 		[~,~,~,~,~,~,hl,~] = simul(5,x,lme, []);
@@ -92,9 +73,14 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 			
 		##===================================================================##
 			
-		if options.verb == 1 ##=== Impression ===##
-		  fprintf('%10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e\n',...
-				  norm(grdl,inf),norm(ce,inf),norm(x,inf),norm(lme,inf),alpha,phi,Q);
+		if options.verb > 0 ##=== Impression ===##
+			if options.verb == 2			
+				fprintf('---------------------------------------------------------------------------------\n');
+				fprintf('%4s %7s %10s %10s %10s %11s %9s %9s\n',...
+						'iter','|gl|','|ce|','|x|','|lme|','alpha','phi','Q');
+			end;
+		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e\n',...
+				  nbIter, norm(grdl,inf),norm(ce,inf),norm(x,inf),norm(lme,inf),alpha,phi,Q);
 		end ##================##    
 			
 							#####################################
@@ -103,7 +89,7 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 							
 ##=== Recherche linéaire pour le pas alpha ======================================##
 		if options.rl == 0
-			[alpha, nbSimul] = rl(simul,x, nbSimul, lme, dir, dphi, phi, 1e-4, options)
+			[alpha, nbSimul] = rl(simul,x, nbSimul, lme, dir, dphi, phi, 1e-4, options);
 		end 
 ##=== Fin recherche linéaire =============================================##
 			
@@ -114,6 +100,13 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		nbIter = nbIter + 1;
 		info.niter = nbIter;
 		##===================================================================##
+		
+		##=== Test d'optimalité =================================================##
+		if (norm(grdl,inf) < options.tol(1)) && (norm(ce,inf) < options.tol(2))
+			info.status = 0; #Solution trouvée
+			info.niter = nbIter;
+			break; #Sortie de Newton
+		end##================================================================##
 			
 		##===Test du nombre d'itérations déjà effectuées============================##
 		if(nbIter > options.maxit)
@@ -123,10 +116,8 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 	end
 ##=== Fin Boucle principale ====================================================##
  
-	if options.verb == 1##=== Impression ===##
+	if options.verb > 0##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
-	elseif options.verb == 2
-		fprintf('-----------------------------------------------------\n');
 	end ##================## 
 
 	return

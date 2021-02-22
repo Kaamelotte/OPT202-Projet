@@ -12,7 +12,7 @@ global A B L R S color
 castest = '4b'
 [L,xy,A,B,R,S] = casTest(castest);
 color = 'r';
-test = '1'
+test = '0'
 
 ##================ Simulateur ================================================##
 switch test
@@ -42,10 +42,14 @@ end
 ##================ Optimiseur ================================================##
 options.tol(1) = 1.e-8;
 options.tol(2) = 1.e-8;
-options.maxit = 100;
+options.maxit = 10;
 
-options.rl = 0;
+options.rl = 1;
 options.verb = 2;
+if options.rl == 1 && options.verb == 2
+	options.verb = 1;
+end;
+
 if test == '0'    
 	##=== Graphe de l'initialisation ===========================================##
 	figure('Name',['Methode de Newton: cas test ',castest]);
@@ -90,7 +94,7 @@ if test == '0'
 	
 	
 	
-	if options.verb != 0
+	if options.verb == 3
 		##=== calcul de la hessienne reduite =======================================##
 		disp("Calcul de la hessienne reduite")
 		[~,ce,ci,g,ae,ai,~,indic] = chs(4,x,lm,[]);
