@@ -1,4 +1,4 @@
-function [x,lme,info] = sqp(simul,x, lme, lmi, options)
+function [x,lme, lmi,info] = sqp(simul,x, lme, lmi, options)
 ################################################################################
 ## sqp :                                                                      ##
 ## Renvoie les multiplicateurs de Lagrange et les abscisses et ordonnees des  ##
@@ -24,9 +24,14 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		return  
 	end ##====================================================================##
 
+	##=== Verification que l'utilisateur de demande pas plus d'info qu'il n'en veut=========##
+	if options.rl == 1 && options.verb == 2
+		options.verb = 1;
+	end;##====================================================================##
+	
 	##=== Calcul des multiplicateurs lagrangiens d'egalite=============================##
     if length(lme) == 0 || length(lmi) == 0
-		[~,~,~,g,ae,ai,~,indic] = chs(4,x,lme, lmi);
+		[~,~,~,g,ae,ai,~,indic] = simul(4,x,lme, lmi);
 		lme = -ae'\g;
 		lmi = -ai'\g;
     end
