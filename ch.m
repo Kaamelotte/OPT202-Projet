@@ -11,15 +11,15 @@ global A B L R S color
 ## TP4: '4a' '4b' '4c'                                                    ##
 ##============================================================================##
 
-castest = '2d'
+castest = '4b'
 color = 'r';
 test = '0'
 
 ##================ Optimiseur ================================================##
-options.tol(1) = 1.e-8; # sur le gred du laplacien
+options.tol(1) = 1.e-8; # sur le grad du laplacien
 options.tol(2) = 1.e-8; # sur les conditions d egalite
 options.tol(3) = 1.e-8; # sur le min des multi de lagrange - les conditions d inegalite
-options.maxit = 100;
+options.maxit = 20;
 options.quad = 1;
 	#0 sans solveur quadratique
 	# 1 avec solveur quadratique
@@ -29,7 +29,18 @@ options.rl = 1; #Recherche lineaire
 options.verb = 1; #Choix affichage
 
 if test == '0'	
-	[x, lme, lmi, ~] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
+	[x, lme, lmi, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
+	if info.status == 2
+		fprintf('--------Condition non remplis--------\n');
+		fprintf('%8s %10s %10s \n',...
+					'|gl|','|ce|','|lmi-ci|');
+		fprintf('%4e %10.4e %10.4e \n',...
+					options.tol(1),options.tol(2), options.tol(3));
+		fprintf('%4e %10.4e %10.4e \n',...
+					info.tol(1),info.tol(2), info.tol(3));
+		fprintf('\n--------------------------------------\n');
+	end
+	
 end
 
 
