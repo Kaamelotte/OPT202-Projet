@@ -118,8 +118,10 @@ function [x,lme, lmi,info] = sqp(simul,x, lme, lmi, options)
 		end##==================================================================##
 			
 		##===Test du nombre d'iterations deja effectuees==============================##
-		if(nbIter > options.maxit)
+		if(nbIter >= options.maxit)
 			info.status = 2; #Sortie de l'algo car pas de convergence
+			info.tol(1) = norm(grdl,inf);
+			info.tol(2) = norm(ce,inf);
 			break; 
 		end ##==================================================================##
 	end
