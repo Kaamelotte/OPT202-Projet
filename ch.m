@@ -9,14 +9,19 @@ global A B L R S color
 ## TP3: '2d' '3a' '3b' '3c'                                                   ##
 ##============================================================================##
 
+castest = '4b'
 [L,xy,A,B,R,S] = casTest(castest);
 color = 'r';
+test = '1'
 
 ##================ Simulateur ================================================##
 switch test
 	case '1' ##=== Trace de la chaine ===##	  
 	  disp('trace de la chaine');
+	  hold on 
 	  chs(1,xy,[], []);
+	  chs(6,xy,[], []);
+	  hold off
 	case '2'  ##=== Energie potentielle et contraintes ======##
 	  disp("calcul de l'energie et des contraintes");
 	  [e,ce,ci,~,~,~,~,indic] = chs(2,xy,[])
@@ -61,6 +66,7 @@ if test == '0'
 		['Nbr Iterations: ', num2str(info.niter)]; "";"" });
 
 	print(["figure_", castest,"_",num2str(options.rl), ".jpg"]);  
+	hold off
 	##==========================================================================##
 	
 	
