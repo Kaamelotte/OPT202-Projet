@@ -73,17 +73,18 @@ end;
 if test == '0'    
 	##=== Graphe de l'initialisation ===========================================##
 	figure('Name',['Methode de Newton: cas test ',castest]);
-	color = [0,0.42,0.7];
 	hold on;
-	chs(1,xy,[]);
+	chs(6, xy );
+	color = [0,0.42,0.7];
+	chs(1, xy );
   
 	##=== Resolution par l'optimiseur ==========================================##
-	[x,lm,info] = sqp(@chs, xy, [], [], options);
+	#[x,lme,info] = sqp(@chs, xy, [], [], options);
+	[x,lme, lmi, info] = oqs(@chs, xy, [], [], options);
     
 	##=== Graphe de la solution ================================================##
 	color = [0.83,0.35,0.17];
-	chs(1,x,lm, []);
-	chs(6,x,lm, []);
+	chs(1, x, lme, lmi);
 	legend('Initialisation','resultat');
 
 	title({ ['Methode de Newton: cas test  ',castest]; ...
