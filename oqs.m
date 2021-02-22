@@ -31,8 +31,8 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 	
 	if (options.verb == 1)##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
-		fprintf('%4s %7s %10s %10s %10s %11s %9s %10s %9s',...
-					'iter','|ce|','|ci|','|x|','|lme|','|lmi-ci|', '|E|');
+		fprintf('%4s %7s %10s %7s %10s %10s %11s %9s %10s %9s',...
+					'iter','|ce|','|ci|', '|gl|','|x|','|lme|','|lmi-ci|', '|E|');
 		fprintf('\n---------------------------------------------------------------------------------\n');
 	end##================##  
 	
@@ -66,24 +66,27 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 		nbSimul += 1;
 		
 		if options.verb > 0 ##=== Impression ===##
-		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e \n',...
-				  nbIter, norm(ce,inf),norm(ci,inf),norm(x,inf),norm(lme,inf),norm(lmi,inf), norm(hl - M,inf));
+		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e \n',...
+				  nbIter, norm(ce,inf),norm(ci,inf), norm(grdl,inf), norm(x,inf),norm(lme,inf),norm(lmi,inf), norm(hl - M,inf));
 		end ##================##    
 		
 							#####################################
 							##=== Test d arret====================##
 							#####################################	
 		
-		##=== Test d'optimalité =================================================##		
-		if (norm(grdl,inf) < options.tol(1) && norm(ce,inf) < options.tol(2) && norm(lmi-ci,inf) < option.tol(3) )
+		##=== Test d'optimalité =================================================##
+		if (norm(grdl,inf) < options.tol(1)) && (norm(ce,inf) < options.tol(2)) && (norm(lmi-ci,inf) < options.tol(3) )
 			info.status = 0; #Solution trouvée
 			info.niter = nbIter;
 			break; #Sortie de Newton
 		end##================================================================##
 			
 		##===Test du nombre d'itérations déjà effectuées============================##
-		if(nbIter > options.maxit)
+		if(nbIter >= options.maxit)
 			info.status = 2; #Sortie de l'algo car pas de convergence
+			info.tol(1) = norm(grdl,inf);
+			info.tol(2) = norm(ce,inf);
+			info.tol(3) = norm(lmi-ci,inf) ;
 			break; 
 		end ##================================================================##
 	end
