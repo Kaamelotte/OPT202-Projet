@@ -6,6 +6,12 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 		info.status = 1 %length(x) impair
 		return  
 	end ##====================================================================##
+	
+	##=== Verification que l'utilisateur de demande pas plus d'info qu'il n'en veut=========##
+	if options.verb == 2
+		options.verb = 1;
+	end;##====================================================================##
+	
 
 	##=== Calcul des multiplicateurs lagrangiens d'égalité=============================##
     if length(lme) == 0 || length(lmi) == 0
@@ -25,8 +31,8 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 	
 	if (options.verb == 1)##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
-		fprintf('%4s %7s %10s %10s %10s %11s\n',...
-				'iter','|gl|','|ce|','|x|','|lme|','|lmi|');
+		fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e \n',...
+					'iter','|ce|','|ci|','|x|','|lme|','|lmi-ci|', '|E|');
 		fprintf('---------------------------------------------------------------------------------\n');
 	end##================##  
 	
@@ -40,6 +46,7 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 		nbSimul += 1;
 		 [L, d, flag] = cholmod(hl, 1.e-5, 1.e+5);
 		 M = L*diag(d)*L';
+		grdl = g + ae' * lme;
 		 		 		 
 		 #[d, obj, information, lm] = qp (X0, H, Q,  A,    B, LB, UB, A_LB, A_IN, A_UB)
 		 [d, obj, information, lm] = qp ( d, M,  g, ae, -ce, [] ,  [] ,     []  ,    ai  ,   -ci   );
@@ -57,16 +64,10 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 
 		[~,ce,ci,g,ae,~,~,indic] = simul(4,x,lme);
 		nbSimul += 1;
-		grdl = g + ae' * lme;
 		
 		if options.verb > 0 ##=== Impression ===##
-			if options.verb == 2			
-				fprintf('---------------------------------------------------------------------------------\n');
-				fprintf('%4s %7s %10s %10s %10s %11s\n',...
-						'iter','|gl|','|ce|','|x|','|lme|','|lmi|');
-			end;
-		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e \n',...
-				  nbIter, norm(grdl,inf),norm(ce,inf),norm(x,inf),norm(lme,inf),norm(lmi,inf));
+		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e \n',...
+				  nbIter, norm(ce,inf),norm(ci,inf),norm(x,inf),norm(lme,inf),norm(lmi,inf), norm(hl - M,inf));
 		end ##================##    
 		
 							#####################################

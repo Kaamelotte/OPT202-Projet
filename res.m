@@ -10,7 +10,6 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 	end ##====================================================================##
 	
 	[L, xy, A, B, R, S] = casTest(castest);
-	L
 	##=== Graphe de l'initialisation ===========================================##
 		figure('Name',['Methode de Newton: cas test ',castest]);
 		hold on;
@@ -32,7 +31,7 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 			[x, lme, lmi, info] = oqs(@chs, xy, [], [], options);
 			color = color_res_2;
 			chs(1, x, lme, lmi);
-			legend('Initialisation','resultat_1', 'resultat_2');
+			legend("", 'Initialisation','resultat_1', 'resultat_2');
 		else
 			legend('Initialisation','resultat');
 		end
@@ -43,5 +42,6 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 		print(["figure_", castest,"_",num2str(options.rl), ".jpg"]);  
 		hold off
 		##==========================================================================##		
+	L
   return
 end
