@@ -10,11 +10,10 @@ global A B L R S color
 ## TP4: '4a' '4b' '4c'                                                    ##
 ##============================================================================##
 
-castest = '2d'
-castest = '2a'
+castest = '4b'
 [L,xy,A,B,R,S] = casTest(castest);
 color = 'r';
-test = 'cholmod'
+test = '0'
 
 ##================ Simulateur ================================================##
 switch test
@@ -44,11 +43,17 @@ switch test
 		tol_big = 1.e+5;
 		[~,~,~,~,~,~,hl,indic] = chs(5,xy,[],[]);
 		 [L, d, flag] = cholmod(hl, tol_small, tol_big);
+		 full(hl)
 		 full(L)
 		 D = diag(d)
 		 M = L*D*L'
-		 disp("M est bien défini positive\n")
+		 disp("M est bien defini positive\n")
 		 eig(M) #valeur propre de M
+		 disp("Erreur d'approximation de hl\n")
+		 E = hl - M
+		 
+		 
+		 
 end 
 
 ##============================================================================##
