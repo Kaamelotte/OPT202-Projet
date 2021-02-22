@@ -1,13 +1,13 @@
 function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 ################################################################################
 ## sqp :                                                                      ##
-## Renvoie les multiplicateurs de Lagrange et les abscisses et ordonnées des  ##
+## Renvoie les multiplicateurs de Lagrange et les abscisses et ordonnees des  ##
 ## noeuds                                                                     ##
 ##                                                                            ##
-## INPUT  - simul : spécification du simulateur                               ##
+## INPUT  - simul : specification du simulateur                               ##
 ##        - x : vecteur contenant la valeur initiale                          ##
 ##        - lme : vecteur contenant les multiplcicateurs de Lagrange intiale   ##
-##        - options : structure spéciafiant les paramètres de fonctionnement  ##
+##        - options : structure speciafiant les parametres de fonctionnement  ##
 ##                    de l’algorithme                                         ##
 ##                                                                            ##
 ## OUTPUT - x : vecteur contenant la valeur finale                            ##
@@ -17,14 +17,14 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 ##                                                                            ##
 ##############################################################################
 	  
-	##=== Vérification de la consistance des arguments d'entrée ========================##
+	##=== Verification de la consistance des arguments d'entree ========================##
 	n = length(x);
 	if mod(n,2) ~= 0
 		info.status = 1 %length(x) impair
 		return  
 	end ##====================================================================##
 
-	##=== Calcul des multiplicateurs lagrangiens d'égalité=============================##
+	##=== Calcul des multiplicateurs lagrangiens d'egalite=============================##
     if length(lme) == 0 || length(lmi) == 0
 		[~,~,~,g,ae,ai,~,indic] = chs(4,x,lme, lmi);
 		lme = -ae'\g;
@@ -38,7 +38,7 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 							#####################################
 	nbIter = 0;
 	nbSimul = 0;
-	alpha = 1;  #pas initial = pas unité
+	alpha = 1;  #pas initial = pas unite
 	normFk = 1;
   
 	if (options.verb == 1)##=== Impression ===##
@@ -83,17 +83,17 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		end ##================##    
 			
 							#####################################
-							##=== Recherche linéaire ==============##
+							##=== Recherche lineaire ==============##
 							#####################################
 							
-##=== Recherche linéaire pour le pas alpha ======================================##
+##=== Recherche lineaire pour le pas alpha ======================================##
 		if options.rl == 0
 			dphi = F' * dF;     #F(z)^T*F'(z)
 			[alpha, nbSimul] = rl(simul,x, nbSimul, lme, dir, dphi, phi, 1e-4, options);
 		end 
-##=== Fin recherche linéaire ===================================================##
+##=== Fin recherche lineaire ===================================================##
 			
-		##=== Calcul des nouveaux paramètres pour Newton ==========================##
+		##=== Calcul des nouveaux parametres pour Newton ==========================##
 		x = x + alpha*dir(1:n);
 		lme = (1-alpha)*lme + alpha*dir(n+1:length(dir));
 			
@@ -105,14 +105,14 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 							##=== Test d arret====================##
 							#####################################	
 		
-		##=== Test d'optimalité ===================================================##
+		##=== Test d'optimalite ===================================================##
 		if (norm(grdl,inf) < options.tol(1)) && (norm(ce,inf) < options.tol(2))
-			info.status = 0; #Solution trouvée
+			info.status = 0; #Solution trouvee
 			info.niter = nbIter;
 			break; #Sortie de Newton
 		end##==================================================================##
 			
-		##===Test du nombre d'itérations déjà effectuées==============================##
+		##===Test du nombre d'iterations deja effectuees==============================##
 		if(nbIter > options.maxit)
 			info.status = 2; #Sortie de l'algo car pas de convergence
 			break; 
