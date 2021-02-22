@@ -22,7 +22,14 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 							#####################################
 	nbIter = 0;
 	nbSimul = 0;
-
+	
+	if (options.verb == 1)##=== Impression ===##
+		fprintf('---------------------------------------------------------------------------------\n');
+		fprintf('%4s %7s %10s %10s %10s %11s\n',...
+				'iter','|gl|','|ce|','|x|','|lme|','|lmi|');
+		fprintf('---------------------------------------------------------------------------------\n');
+	end##================##  
+	
 ##=== Boucle principale =======================================================##
 	while true
 		[~,ce,ci,g,ae,ai,~,indic] = simul(4,x,lme);
@@ -48,15 +55,25 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 		info.niter = nbIter;
 		##===================================================================##
 
+		[~,ce,ci,g,ae,~,~,indic] = simul(4,x,lme);
+		nbSimul += 1;
+		grdl = g + ae' * lme;
+		
+		if options.verb > 0 ##=== Impression ===##
+			if options.verb == 2			
+				fprintf('---------------------------------------------------------------------------------\n');
+				fprintf('%4s %7s %10s %10s %10s %11s\n',...
+						'iter','|gl|','|ce|','|x|','|lme|','|lmi|');
+			end;
+		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e \n',...
+				  nbIter, norm(grdl,inf),norm(ce,inf),norm(x,inf),norm(lme,inf),norm(lmi,inf));
+		end ##================##    
+		
 							#####################################
 							##=== Test d arret====================##
 							#####################################	
 		
 		##=== Test d'optimalité =================================================##		
-		[~,ce,ci,g,ae,~,~,indic] = simul(4,x,lme);
-		nbSimul += 1;
-		grdl = g + ae' * lme;
-		
 		if (norm(grdl,inf) < options.tol(1) && norm(ce,inf) < options.tol(2) && norm(lmi-ci,inf) < option.tol(3) )
 			info.status = 0; #Solution trouvée
 			info.niter = nbIter;
