@@ -9,7 +9,7 @@ color = 'r';  lgd = "resultat";
 ##============================================================================##
 
 castest = '4b'
-test = '0'
+test = 'c'
 
 ##================ Optimiseur ================================================##
 options = option();
@@ -43,6 +43,10 @@ switch test
 	case 'c'  ##=== Energie potentielle et contraintes ======##
 		disp("calcul de l'energie et des contraintes");
 		[e,ce,ci,~,~,~,~,indic] = chs(2,xy,[],[])
+		length(xy)
+		length(R)
+		length(ce)
+		length(ci)
 	case 'g'  ##=== Gradient de e et jacobienne de c  =================##
 		disp("calcul du gradient de e et de la jacobienne de c");
 		[~,~,~,g,ae,ai,~,indic] = chs(4,xy,[],[])

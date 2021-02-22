@@ -56,11 +56,12 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic,xy,lme,lmi)
 	if indic == 6
 	 ##=== Tracé du plancher === #
 	  #calcule des limites de la figure
-	  if length(R) != 0
-		  xmin = min([0;xp]) -0.5;
-		  xmax = max([xm;A]) +0.5;
-		  ymin = min([0;yp])-0.5;
-		  ymax = max([ym;A])+0.5 ;
+		if length(R) != 0
+			d = 1;
+		  xmin = min([0;xp]) -d;
+		  xmax = max([xm;A]) +d;
+		  ymin = min([0;yp])-d;
+		  ymax = max([ym;A])+d ;
 		 #		A
 		 #			x
 		 #         |  \
