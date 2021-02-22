@@ -2,34 +2,26 @@ clear()
 close()
 clc()
 
-global A B L R S color
+global A B L R S color lgd
 
 ##=================== Cas test: ==============================================##
-## TP1: '1																	                                                                  ##
-## TP2: '2a' '2b' '2c' '2d'                                                                                                              ##
-## TP3: '2d' '3a' '3b' '3c'                                                                                                              ##
-## TP4: '4a' '4b' '4c'                                                                                                                     ##
-##=========================================================================##
+## TP1: '1																	  ##
+## TP2: '2a' '2b' '2c' '2d'                                                   ##
+## TP3: '2d' '3a' '3b' '3c'                                                   ##
+## TP4: '4a' '4b' '4c'                                                    ##
+##============================================================================##
 
 castest = '4b'
 color = 'r';
+lgd = "resultat";
 test = '0'
 
-##================ Optimiseur ===============================================##
-options.tol(1) = 1.e-8; # sur le grad du laplacien
-options.tol(2) = 1.e-8; # sur les conditions d egalite
-options.tol(3) = 1.e-8; # sur le min des multi de lagrange - les conditions d inegalite
-options.maxit = 20;
-options.quad = 1;
-	#0 sans solveur quadratique
-	# 1 avec solveur quadratique
-	# 2 avec et sans solveur quadratique
-
-options.rl = 1; #Recherche lineaire
-options.verb = 1; #Choix affichage
+##================ Optimiseur ================================================##
+options = option();
 
 if test == '0'	
 	[x, lme, lmi, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
+	
 	if info.status == 2
 		fprintf('--------Condition non remplis--------\n');
 		fprintf('%8s %10s %10s \n',...
@@ -39,24 +31,23 @@ if test == '0'
 		fprintf('%4e %10.4e %10.4e \n',...
 					info.tol(1),info.tol(2), info.tol(3));
 		fprintf('\n--------------------------------------\n');
-	end
-	
+	end	
 end
 
 
-##================ Simulateur ===============================================##
+##================ Simulateur ================================================##
 [L,xy,A,B,R,S] = casTest(castest);
 switch test
 	case '1' ##=== Trace de la chaine ===##	  
 		disp('trace de la chaine');
-		hold on 
+		hold on;
 		chs(1,xy,[], []);
 		chs(6,xy,[], []);
-		hold off
-	case '2'  ##=== Energie potentielle et contraintes ======##
+		hold off;
+	case 'c'  ##=== Energie potentielle et contraintes ======##
 		disp("calcul de l'energie et des contraintes");
 		[e,ce,ci,~,~,~,~,indic] = chs(2,xy,[],[])
-	case '4'  ##=== Gradient de e et jacobienne de c  =================##
+	case 'g'  ##=== Gradient de e et jacobienne de c  =================##
 		disp("calcul du gradient de e et de la jacobienne de c");
 		[~,~,~,g,ae,ai,~,indic] = chs(4,xy,[],[])
 	case 'hl' ##=== Hessien du lagrangien ============##
@@ -83,7 +74,7 @@ switch test
 		eig(M) #valeur propre de M
 		disp("Erreur d'approximation de hl\n")
 		E =  norm(hl - M,inf)
-end ##=====================================================================##
+end##============================================================================##
 	
 	
 	
@@ -153,4 +144,7 @@ if options.verb == 3 &&  test == '0'
 
   fprintf('\n')
 end;
-##=========================================================================##
+##============================================================================##
+
+
+

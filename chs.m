@@ -15,7 +15,7 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic,xy,lme,lmi)
 ##        - indic : booléan du bon déroulement de la simulation
 ##
 ################################################################################
-  global A B L R S color
+  global A B L R S color lgd
   ##=== Test de consistance des arguments d'entrée ===========================##
   if mod(length(xy),2) ~= 0
       indic = -1 % length(xy) impair
@@ -37,9 +37,9 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic,xy,lme,lmi)
   ##==========================================================================##
 
   ##=== Tracé de la chaîne======================================================##
-	if indic == 1
+	if indic == 1 
 		 ##=== Tracé de la chaîne   === #
-		  plot([ 0; xp ], [ 0; yp ],'-o','linewidth',2, 'color',color);
+		  plt = plot([ 0; xp ], [ 0; yp ],'-o','linewidth',2, 'color',color, 'DisplayName', lgd);
 		  Longueur = sqrt((xp-xm).^2 + (yp-ym).^2);
 		  dx = 1/2*(xp-xm);
 		  dy = 1/2*(yp-ym);
@@ -75,7 +75,7 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic,xy,lme,lmi)
 		 for i = 1:length(R)
 			y = (R(i) + S(i)*x )- shift;
 			y(3) = y(4);
-			fill(x,y,  [0.8 0.8 0.8], 'EdgeColor', [0.8 0.8 0.8])
+			fill(x,y,  [0.8 0.8 0.8], 'EdgeColor', [0.8 0.8 0.8], 'HandleVisibility','off')
 		 end;
 		  
 		  #axis ([xmin+0.5, xmax-0.5, ymin, ymax], "square");
