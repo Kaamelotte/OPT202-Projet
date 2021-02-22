@@ -59,28 +59,15 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		Q = normFkp / normFk^2;
 		normFk = normFkp;
 		
-							#####################################
-							##=== direction de descente===========##
-							#####################################
-							
-	##=== sans inegalites =======================================================##
-		[~,~,~,~,~,~,hl,~] = simul(5,x,lme, lmi);
-	if length(ci) == 0
+		##=== Calcul de la direction de descente ===================================##
+		[~,~,~,~,~,~,hl,~] = simul(5,x,lme, []);
 		nbSimul += 1;
 		dF = [ hl, ae'; ae, zeros(m,m) ];
 		F = [ g ; ce ];
 		dir = -dF\F;    
-	else##=== avec inegalites====================================================##
-		 [L, d, flag] = cholmod(hl, 1.e-5, 1.e+5);
-		 M = L*diag(d)*L';		 
-		 [d, obj, information, lambda] = qp( M, d, g, ae, -ce,.... x, H, q, A, b
-																	-Inf, Inf, ... lb, ub
-																	-Inf, ai, -ci); #A_lb, A_in, A_ub
-		d, obj, information, lambda
-		dir = [ d ; lambda]
-	end ##====================================================================##
-	
-		#Faut lui trouver une petite place a ce petit chou
+		##===================================================================##
+		
+		#Faut lui trouver une petit place a ce petit chou
 		phi = 0.5 * F' * F; #0.5*||F(z)||^2
 			
 		##===================================================================##
@@ -94,42 +81,42 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e\n',...
 				  nbIter, norm(grdl,inf),norm(ce,inf),norm(x,inf),norm(lme,inf),alpha,phi,Q);
 		end ##================##    
-						
+			
 							#####################################
-							##=== Recherche lineaire ==============##
+							##=== Recherche linéaire ==============##
 							#####################################
 							
-##=== Recherche lineaire pour le pas alpha ======================================##
+##=== Recherche linéaire pour le pas alpha ======================================##
 		if options.rl == 0
 			dphi = F' * dF;     #F(z)^T*F'(z)
 			[alpha, nbSimul] = rl(simul,x, nbSimul, lme, dir, dphi, phi, 1e-4, options);
 		end 
 ##=== Fin recherche linéaire ===================================================##
 			
-		##=== Calcul des nouveaux paramètres pour Newton ========================##
+		##=== Calcul des nouveaux paramètres pour Newton ==========================##
 		x = x + alpha*dir(1:n);
 		lme = (1-alpha)*lme + alpha*dir(n+1:length(dir));
 			
 		nbIter = nbIter + 1;
 		info.niter = nbIter;
-		##===================================================================##
+		##=====================================================================##
 
 							#####################################
 							##=== Test d arret====================##
 							#####################################	
 		
-		##=== Test d'optimalité =================================================##
+		##=== Test d'optimalité ===================================================##
 		if (norm(grdl,inf) < options.tol(1)) && (norm(ce,inf) < options.tol(2))
 			info.status = 0; #Solution trouvée
 			info.niter = nbIter;
 			break; #Sortie de Newton
-		end##================================================================##
+		end##==================================================================##
 			
-		##===Test du nombre d'itérations déjà effectuées============================##
+		##===Test du nombre d'itérations déjà effectuées==============================##
 		if(nbIter > options.maxit)
 			info.status = 2; #Sortie de l'algo car pas de convergence
 			break; 
-		end ##================================================================##
+		end ##==================================================================##
 	end
 ##=== Fin Boucle principale ====================================================##
  
