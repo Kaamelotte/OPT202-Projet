@@ -11,7 +11,7 @@ function options = option(maxit = 20, quad = 1, verb = 1, rl = 1, tol = [1.e-8,1
 		# 2  avec et sans solveur quadratique
 
 	options.rl = rl; #Recherche lineaire
-	options.verb = verb
+	options.verb = verb;
 	options.save = save; #enregistrement sous jpg du res
 	
 	return
