@@ -46,8 +46,7 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		fprintf('%4s %7s %10s %10s %10s %11s %9s %9s\n',...
 				'iter','|gl|','|ce|','|x|','|lme|','alpha','phi','Q');
 		fprintf('---------------------------------------------------------------------------------\n');
-	end
-	##================##  
+	end##================##  
 
 ##=== Boucle principale =======================================================##
 	while true		
@@ -69,7 +68,6 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		##===================================================================##
 			
 		phi = 0.5 * F' * F; #0.5*||F(z)||^2
-		dphi = F' * dF;     #F(z)^T*F'(z)
 			
 		##===================================================================##
 			
@@ -89,6 +87,7 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 							
 ##=== Recherche linéaire pour le pas alpha ======================================##
 		if options.rl == 0
+			dphi = F' * dF;     #F(z)^T*F'(z)
 			[alpha, nbSimul] = rl(simul,x, nbSimul, lme, dir, dphi, phi, 1e-4, options);
 		end 
 ##=== Fin recherche linéaire =============================================##
@@ -100,6 +99,10 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		nbIter = nbIter + 1;
 		info.niter = nbIter;
 		##===================================================================##
+		
+							#####################################
+							##=== Test d arret ===== ==============##
+							#####################################	
 		
 		##=== Test d'optimalité =================================================##
 		if (norm(grdl,inf) < options.tol(1)) && (norm(ce,inf) < options.tol(2))
