@@ -42,8 +42,10 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 		
 		title({ ['Methode de Newton: cas test  ',castest]; ...
 			['Nbr Iterations: ', num2str(info.niter)]; "";"" });
-
-		print(["figure_", castest,"_",num2str(options.rl), ".jpg"]);  
+		
+		if options.save == 1 
+			print(["figure_", castest,"_",num2str(options.rl), ".jpg"]);  
+		end
 		hold off
 		##==========================================================================##		
 	L

@@ -1,9 +1,6 @@
-clear()
-close()
-clc()
-
-global A B L R S color lgd
-
+clear(); close(); clc();
+global A B L R S color lgd;
+color = 'r';  lgd = "resultat";
 ##=================== Cas test: ==============================================##
 ## TP1: '1																	  ##
 ## TP2: '2a' '2b' '2c' '2d'                                                   ##
@@ -11,21 +8,20 @@ global A B L R S color lgd
 ## TP4: '4a' '4b' '4c'                                                    ##
 ##============================================================================##
 
-castest = '4b'
-color = 'r';
-lgd = "resultat";
-test = '0'
+castest = '4a'
+test = 'c'
 
 ##================ Optimiseur ================================================##
 options = option();
+options.save = 0;
 
 if test == '0'	
-	[x, lme, lmi, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
+	[x, lmee, lmei, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
 	
 	if info.status == 2
 		fprintf('--------Condition non remplis--------\n');
 		fprintf('%8s %10s %10s \n',...
-					'|gl|','|ce|','|lmi-ci|');
+					'|gl|','|ce|','|lmei-ci|');
 		fprintf('%4e %10.4e %10.4e \n',...
 					options.tol(1),options.tol(2), options.tol(3));
 		fprintf('%4e %10.4e %10.4e \n',...
@@ -34,9 +30,8 @@ if test == '0'
 	end	
 end
 
-
 ##================ Simulateur ================================================##
-[L,xy,A,B,R,S] = casTest(castest);
+[~,xy,~,~,~,~] = casTest(castest);
 switch test
 	case '1' ##=== Trace de la chaine ===##	  
 		disp('trace de la chaine');
@@ -59,13 +54,13 @@ switch test
 	case 'grad' ##=== Verification du gradient de l'energie potentielle ===##
 		disp("verification du gradient de l'energie potentielle"); 
 		verifierGradient(xy);
-	case 'cholmod' ##=== Test de la fonction cholmod ===##
-		disp("Test de la fonction cholmod\n"); 
+	case 'cholmeod' ##=== Test de la fonction cholmeod ===##
+		disp("Test de la fonction cholmeod\n"); 
 		#Tolerance
 		tol_small = 1.e-5; 
 		tol_big = 1.e+5;
 		[~,~,~,~,~,~,hl,indic] = chs(5,xy,[],[]);
-		[L, d, flag] = cholmod(hl, tol_small, tol_big);
+		[L, d, flag] = cholmeod(hl, tol_small, tol_big);
 		full(hl)
 		full(L)
 		D = diag(d)
@@ -75,45 +70,12 @@ switch test
 		disp("Erreur d'approximation de hl\n")
 		E =  norm(hl - M,inf)
 end##============================================================================##
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 if options.verb == 3 &&  test == '0'
 	##=== calcul de la hessienne reduite =======================================##
 	disp("Calcul de la hessienne reduite")
-	[~,ce,ci,g,ae,ai,~,indic] = chs(4,x,lm,[]);
-	[~,~,~,~,~,~,hl,indic] = chs(5,x,lm,[]);
+	[~,ce,ci,g,ae,ai,~,indic] = chs(4,x,lme,[]);
+	[~,~,~,~,~,~,hl,indic] = chs(5,x,lme,[]);
 
 	N = null(ae)
 	eig(N'*hl*N)
@@ -122,8 +84,8 @@ if options.verb == 3 &&  test == '0'
 	fprintf('---------------------------------\n');
 	fprintf('Verification des CS2:\n');
 	fprintf('---------------------------------\n');
-	fprintf('Grdl(x,lm) =\n');
-	fprintf('%+25.5e\n',g+ae'*lm);
+	fprintf('Grdl(x,lme) =\n');
+	fprintf('%+25.5e\n',g+ae'*lme);
 	fprintf('---------------------------------\n');
 	fprintf('c(x) =\n');
 	fprintf('%+25.5e\n',ce);
@@ -135,7 +97,7 @@ if options.verb == 3 &&  test == '0'
 	%fprintf('---------------------------------\n');
 	test = 0;
 	for i=1:size(N,2)
-	fprintf("|   <Grd^2l(x,lm).z|z> = %f\n",dot(hl*N(:,i),N(:,i)));
+	fprintf("|   <Grd^2l(x,lme).z|z> = %f\n",dot(hl*N(:,i),N(:,i)));
 	test += (dot(hl*N(:,i),N(:,i))<=0);
 	end  
 	fprintf('----------------------------------\n');
