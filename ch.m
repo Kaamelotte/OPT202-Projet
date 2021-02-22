@@ -10,7 +10,7 @@ global A B L R S color
 ## TP4: '4a' '4b' '4c'                                                    ##
 ##============================================================================##
 
-castest = '4b'
+castest = '2a'
 [L,xy,A,B,R,S] = casTest(castest);
 color = 'r';
 test = '0'
@@ -50,13 +50,11 @@ switch test
 		 disp("M est bien defini positive\n")
 		 eig(M) #valeur propre de M
 		 disp("Erreur d'approximation de hl\n")
-		 E = hl - M
+		 E =  sum(sum(abs(hl - M)) )
 		 
 		 
 		 
-end 
-
-##============================================================================##
+end##============================================================================##
 
 ##================ Optimiseur ================================================##
 options.tol(1) = 1.e-8; # sur le gred du laplacien
@@ -64,35 +62,31 @@ options.tol(2) = 1.e-8; # sur les conditions d egalite
 options.tol(3) = 1.e-8; # sur le min des multi de lagrange - les conditions d inegalite
 options.maxit = 10;
 
+options.quad = 0# Utilisation solveur quadratique ou non, obligatoire pour TP4
+	#0 sans
+	# 1 avec
+	# 2 les deux
+
 options.rl = 1; #Recherche lineaire
 options.verb = 2;
-if options.rl == 1 && options.verb == 2
-	options.verb = 1;
-end;
 
 if test == '0'    
-	##=== Graphe de l'initialisation ===========================================##
-	figure('Name',['Methode de Newton: cas test ',castest]);
-	hold on;
-	chs(6, xy );
-	color = [0,0.42,0.7];
-	chs(1, xy );
-  
-	##=== Resolution par l'optimiseur ==========================================##
-	#[x,lme,info] = sqp(@chs, xy, [], [], options);
-	[x,lme, lmi, info] = oqs(@chs, xy, [], [], options);
-    
-	##=== Graphe de la solution ================================================##
-	color = [0.83,0.35,0.17];
-	chs(1, x, lme, lmi);
-	legend('Initialisation','resultat');
+	[x, lme, lmi, info] = res(castest, options)
 
-	title({ ['Methode de Newton: cas test  ',castest]; ...
-		['Nbr Iterations: ', num2str(info.niter)]; "";"" });
-
-	print(["figure_", castest,"_",num2str(options.rl), ".jpg"]);  
-	hold off
-	##==========================================================================##
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
