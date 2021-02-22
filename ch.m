@@ -40,11 +40,12 @@ end
 ##============================================================================##
 
 ##================ Optimiseur ================================================##
-options.tol(1) = 1.e-8;
-options.tol(2) = 1.e-8;
+options.tol(1) = 1.e-8; # sur le gred du laplacien
+options.tol(2) = 1.e-8; # sur les conditions d egalite
+options.tol(3) = 1.e-8; # sur le min des multi de lagrange - les conditions d inegalite
 options.maxit = 10;
 
-options.rl = 1;
+options.rl = 1; #Recherche lineaire
 options.verb = 2;
 if options.rl == 1 && options.verb == 2
 	options.verb = 1;
