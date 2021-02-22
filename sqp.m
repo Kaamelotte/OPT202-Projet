@@ -99,6 +99,10 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		nbIter = nbIter + 1;
 		info.niter = nbIter;
 		##===================================================================##
+    
+    if contraintes d'inégalité
+      pb osculateur
+    end
 		
 							#####################################
 							##=== Test d arret====================##
