@@ -1,11 +1,11 @@
-function [L, d, flag] = cholmod (M, small, big)
+function [L, d, flag] = cholmod (H, small, big)
 
 %
-% [L, d] = cholmod (M, small, big)
-% [L, d, flag] = cholmod (M, small, big)
+% [L, d] = cholmod (H, small, big)
+% [L, d, flag] = cholmod (H, small, big)
 %
-% Computes a modified Cholesky factorization of the symmetric matrix M,
-% such that M + E = L*D*L', where L is unit lower triangular and D =
+% Computes a modified Cholesky factorization of the symmetric matrix H,
+% such that H + E = L*D*L', where L is unit lower triangular and D =
 % diag(d), and E is some nonnegative diagonal matrix. The matrix E is
 % computed as small as possible such that d(i) >= small (for all i) and
 % abs(L(i,j)*sqrt(d(j))) <= big (for all i>j). It is required to have
@@ -13,7 +13,7 @@ function [L, d, flag] = cholmod (M, small, big)
 %
 % If present, the output argument flag describes the computation:
 %   0 (computation is fine),
-%   1 (M is not square or empty),
+%   1 (H is not square or empty),
 %   2 (small<=0 or big<=0 or sqrt(small)>big).
 %
 % Author: J.Ch. Gilbert (Inria), following the description in the book
@@ -28,8 +28,8 @@ function [L, d, flag] = cholmod (M, small, big)
 
 % Check input arguments
 
-  n = size(M,1);
-  if (n == 0) | (size(M,2) ~= n)
+  n = size(H,1);
+  if (n == 0) | (size(H,2) ~= n)
     if (nargout > 2) flag = 1; end
     return
   end
@@ -54,7 +54,7 @@ function [L, d, flag] = cholmod (M, small, big)
 
     % dd = d(j)
 
-    dd = M(j,j);
+    dd = H(j,j);
     for k = 1:j-1
       dd = dd - L(j,k)^2*d(k);
     end
@@ -63,7 +63,7 @@ function [L, d, flag] = cholmod (M, small, big)
 
     theta = 0;
     for i = j+1:n
-      aux = M(i,j);
+      aux = H(i,j);
       for k = 1:j-1
         aux = aux - L(i,k)*L(j,k)*d(k);
       end
