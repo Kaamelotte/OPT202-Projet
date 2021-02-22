@@ -50,7 +50,7 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 
 ##=== Boucle principale =======================================================##
 	while true		
-		[e,ce,ci,g,ae,ai,~,indic] = simul(4,x,lme);
+		[~,ce,ci,g,ae,ai,~,indic] = simul(4,x,lme);
 		nbSimul += 1;
 		grdl = g + ae' * lme;
 		
@@ -99,11 +99,7 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		nbIter = nbIter + 1;
 		info.niter = nbIter;
 		##===================================================================##
-    
-    if contraintes d'inégalité
-      pb osculateur
-    end
-		
+
 							#####################################
 							##=== Test d arret====================##
 							#####################################	

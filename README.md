@@ -1,5 +1,6 @@
 # -OPT202-PRojet
 
+calibri 12
 largeur indentation 4
 largeur tabulation 4
 Encodage : SYSTEM (CP1252)
