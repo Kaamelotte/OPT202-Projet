@@ -1,5 +1,5 @@
 function [x, lme, lmi, info, x2] = res(castest, options, ...
-													  color_init = [0,0.42,0.7], color_res_1 = [0.83,0.35,0.17], color_res_2 = [0.6,0.3,0.6])
+													  color_res_1 = [0.83,0.35,0.17], color_init = [0,0.42,0.7], color_res_2 = [0.6,0.3,0.6])
 
 	global A B L R S color
 	
@@ -10,7 +10,7 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 	end ##====================================================================##
 	
 	[L, xy, A, B, R, S] = casTest(castest);
-	
+	L
 	##=== Graphe de l'initialisation ===========================================##
 		figure('Name',['Methode de Newton: cas test ',castest]);
 		hold on;

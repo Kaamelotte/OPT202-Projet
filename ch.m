@@ -10,7 +10,7 @@ global A B L R S color
 ## TP4: '4a' '4b' '4c'                                                    ##
 ##============================================================================##
 
-castest = '2a'
+castest = '4a'
 color = 'r';
 test = '0'
 
@@ -18,7 +18,7 @@ test = '0'
 options.tol(1) = 1.e-8; # sur le gred du laplacien
 options.tol(2) = 1.e-8; # sur les conditions d egalite
 options.tol(3) = 1.e-8; # sur le min des multi de lagrange - les conditions d inegalite
-options.maxit = 10;
+options.maxit = 100;
 options.quad = 2
 	#0 sans solveur quadratique
 	# 1 avec solveur quadratique
@@ -29,11 +29,11 @@ options.verb = 0; #Choix affichage
 
 if test == '0'
 	
+	options.quad = 0
+	[x, lme, lmi, ~] = res(castest, options);
+	
 	options.quad = 1
-	[x, lme, lmi, ~] = res(castest, options);
-	
-	options.quad = 2
-	[x, lme, lmi, ~] = res(castest, options);
+	[x, lme, lmi, ~] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
 
 end
 	
@@ -71,42 +71,41 @@ end
 	
 	
 	
-	if options.verb == 3 &&  test == '0'
-		##=== calcul de la hessienne reduite =======================================##
-		disp("Calcul de la hessienne reduite")
-		[~,ce,ci,g,ae,ai,~,indic] = chs(4,x,lm,[]);
-		[~,~,~,~,~,~,hl,indic] = chs(5,x,lm,[]);
+if options.verb == 3 &&  test == '0'
+	##=== calcul de la hessienne reduite =======================================##
+	disp("Calcul de la hessienne reduite")
+	[~,ce,ci,g,ae,ai,~,indic] = chs(4,x,lm,[]);
+	[~,~,~,~,~,~,hl,indic] = chs(5,x,lm,[]);
 
-		N = null(ae)
-		eig(N'*hl*N)
+	N = null(ae)
+	eig(N'*hl*N)
 
-		##=== Conditions suffisantes d'ordre 2 =====================================##
-		fprintf('---------------------------------\n');
-		fprintf('Verification des CS2:\n');
-		fprintf('---------------------------------\n');
-		fprintf('Grdl(x,lm) =\n');
-		fprintf('%+25.5e\n',g+ae'*lm);
-		fprintf('---------------------------------\n');
-		fprintf('c(x) =\n');
-		fprintf('%+25.5e\n',ce);
-		fprintf('---------------------------------\n');
-		fprintf("hl defini positif sur\n le noyau de c'(x)?\n");
-		fprintf('---------------------------------\n');
-		%fprintf("Noyau de c'(x):\n");
-		N = null(ae)
-		%fprintf('---------------------------------\n');
-		test = 0;
-		for i=1:size(N,2)
-		fprintf("|   <Grd^2l(x,lm).z|z> = %f\n",dot(hl*N(:,i),N(:,i)));
-		test += (dot(hl*N(:,i),N(:,i))<=0);
-		end  
-		fprintf('----------------------------------\n');
-		
-		fprintf('%.5f,\n%.5f,',x(1:length(x)/2),x(length(x)/2+1:length(x)))
+	##=== Conditions suffisantes d'ordre 2 =====================================##
+	fprintf('---------------------------------\n');
+	fprintf('Verification des CS2:\n');
+	fprintf('---------------------------------\n');
+	fprintf('Grdl(x,lm) =\n');
+	fprintf('%+25.5e\n',g+ae'*lm);
+	fprintf('---------------------------------\n');
+	fprintf('c(x) =\n');
+	fprintf('%+25.5e\n',ce);
+	fprintf('---------------------------------\n');
+	fprintf("hl defini positif sur\n le noyau de c'(x)?\n");
+	fprintf('---------------------------------\n');
+	%fprintf("Noyau de c'(x):\n");
+	N = null(ae)
+	%fprintf('---------------------------------\n');
+	test = 0;
+	for i=1:size(N,2)
+	fprintf("|   <Grd^2l(x,lm).z|z> = %f\n",dot(hl*N(:,i),N(:,i)));
+	test += (dot(hl*N(:,i),N(:,i))<=0);
+	end  
+	fprintf('----------------------------------\n');
+	
+	fprintf('%.5f,\n%.5f,',x(1:length(x)/2),x(length(x)/2+1:length(x)))
 
-	  fprintf('\n')
-	end;
-end
+  fprintf('\n')
+end;
 ##============================================================================##
 
 
