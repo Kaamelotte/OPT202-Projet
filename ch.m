@@ -8,15 +8,15 @@ color = 'r';  lgd = "resultat";
 ## TP4: '4a' '4b' '4c'                                                    ##
 ##============================================================================##
 
-castest = '4a'
-test = 'c'
+castest = '4b'
+test = '0'
 
 ##================ Optimiseur ================================================##
 options = option();
 options.save = 0;
 
 if test == '0'	
-	[x, lmee, lmei, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
+	[x, lme, lmei, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
 	
 	if info.status == 2
 		fprintf('--------Condition non remplis--------\n');
@@ -31,7 +31,8 @@ if test == '0'
 end
 
 ##================ Simulateur ================================================##
-[~,xy,~,~,~,~] = casTest(castest);
+[L,xy,A,B,R,S] = casTest(castest);
+xy
 switch test
 	case '1' ##=== Trace de la chaine ===##	  
 		disp('trace de la chaine');
