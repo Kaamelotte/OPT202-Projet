@@ -24,23 +24,29 @@ switch test
 	  hold off
 	case '2'  ##=== Energie potentielle et contraintes ======##
 	  disp("calcul de l'energie et des contraintes");
-	  [e,ce,ci,~,~,~,~,indic] = chs(2,xy,[])
+	  [e,ce,ci,~,~,~,~,indic] = chs(2,xy,[],[])
 	case '4'  ##=== Gradient de e et jacobienne de c  =================##
 		disp("calcul du gradient de e et de la jacobienne de c");
-		[~,~,~,g,ae,ai,~,indic] = chs(4,xy,[])
+		[~,~,~,g,ae,ai,~,indic] = chs(4,xy,[],[])
 	case '5' ##=== Hessien du lagrangien ============##
 		disp("calcul du hessien du lagrangien");
-		[~,~,~,~,~,~,hl,indic] = chs(5,xy,[])
+		[~,~,~,~,~,~,hl,indic] = chs(5,xy,[],[])
 		full(hl)
 	case 'grad' ##=== Verification du gradient de l'energie potentielle ===##
 		disp("verification du gradient de l'energie potentielle"); 
 		verifierGradient(xy);
 	case 'cholmod' ##=== Test de la fonction cholmod ===##
-		disp("Test de la fonction cholmod"); 
-		small = 1.e-5;
-		big = 1.e+5;
-		[~,~,~,~,~,~,hl,indic] = chs(5,xy,[])
-		cholmod(hl, small, big)
+		disp("Test de la fonction cholmod\n"); 
+		#Tolerance
+		tol_small = 1.e-5; 
+		tol_big = 1.e+5;
+		[~,~,~,~,~,~,hl,indic] = chs(5,xy,[],[]);
+		 [L, d, flag] = cholmod(hl, tol_small, tol_big);
+		 full(L)
+		 D = diag(d)
+		 M = L*D*L'
+		 disp("M est bien défini positive\n")
+		 eig(M) #valeur propre de M
 end 
 
 ##============================================================================##
