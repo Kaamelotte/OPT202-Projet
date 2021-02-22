@@ -3,8 +3,21 @@
 largeur indentation 4
 largeur tabulation 4
 Encodage : SYSTEM (CP1252)
-Règle pour les commentaire
 
+
+conseil pour git
+
+* Si tu changer des paramètres fait pas de commit sur eux
+par exemple test = "2a" en deux test = "2b"
+
+
+
+
+
+
+
+
+Règle pour les commentaire
 * pour les impression : 
 ##=== Impression ===##
 ##================##  	

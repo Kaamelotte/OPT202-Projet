@@ -9,10 +9,10 @@ global A B L R S color
 ## TP3: '2d' '3a' '3b' '3c'                                                   ##
 ##============================================================================##
 
-castest = '4b'
+castest = '2d'
 [L,xy,A,B,R,S] = casTest(castest);
 color = 'r';
-test = '0'
+test = 'cholmod'
 
 ##================ Simulateur ================================================##
 switch test
@@ -35,6 +35,12 @@ switch test
 	case 'grad' ##=== Verification du gradient de l'energie potentielle ===##
 		disp("verification du gradient de l'energie potentielle"); 
 		verifierGradient(xy);
+	case 'cholmod' ##=== Test de la fonction cholmod ===##
+		disp("Test de la fonction cholmod"); 
+		small = 1.e-5;
+		big = 1.e+5;
+		[~,~,~,~,~,~,hl,indic] = chs(5,xy,[])
+		cholmod(hl, small, big)
 end 
 
 ##============================================================================##
