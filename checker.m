@@ -1,6 +1,6 @@
 function [] = checker(castest, test = 1)
-	[L,xy,A,B,R,S] = casTest(castest);
 	global A B L R S color lgd;
+	[L,xy,A,B,R,S] = casTest(castest);
 	xy
 	switch test
 		case '1' ##=== Trace de la chaine ===##	  
@@ -18,6 +18,7 @@ function [] = checker(castest, test = 1)
 			g
 			ae = full(ae)
 			ai = full(ai)
+			size(ai)
 		case 'hl' ##=== Hessien du lagrangien ============##
 			disp("calcul du hessien du lagrangien");
 			[~,~,~,~,~,~,hl,indic] = chs(5,xy,[],[]);
