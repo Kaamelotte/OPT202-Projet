@@ -18,14 +18,14 @@ test = '0'
 ##================ Simulateur ================================================##
 switch test
 	case '1' ##=== Trace de la chaine ===##	  
-	  disp('trace de la chaine');
-	  hold on 
-	  chs(1,xy,[], []);
-	  chs(6,xy,[], []);
-	  hold off
+		disp('trace de la chaine');
+		hold on 
+		chs(1,xy,[], []);
+		chs(6,xy,[], []);
+		hold off
 	case '2'  ##=== Energie potentielle et contraintes ======##
-	  disp("calcul de l'energie et des contraintes");
-	  [e,ce,ci,~,~,~,~,indic] = chs(2,xy,[],[])
+		disp("calcul de l'energie et des contraintes");
+		[e,ce,ci,~,~,~,~,indic] = chs(2,xy,[],[])
 	case '4'  ##=== Gradient de e et jacobienne de c  =================##
 		disp("calcul du gradient de e et de la jacobienne de c");
 		[~,~,~,g,ae,ai,~,indic] = chs(4,xy,[],[])
@@ -42,18 +42,15 @@ switch test
 		tol_small = 1.e-5; 
 		tol_big = 1.e+5;
 		[~,~,~,~,~,~,hl,indic] = chs(5,xy,[],[]);
-		 [L, d, flag] = cholmod(hl, tol_small, tol_big);
-		 full(hl)
-		 full(L)
-		 D = diag(d)
-		 M = L*D*L'
-		 disp("M est bien defini positive\n")
-		 eig(M) #valeur propre de M
-		 disp("Erreur d'approximation de hl\n")
-		 E =  sum(sum(abs(hl - M)) )
-		 
-		 
-		 
+		[L, d, flag] = cholmod(hl, tol_small, tol_big);
+		full(hl)
+		full(L)
+		D = diag(d)
+		M = L*D*L'
+		disp("M est bien defini positive\n")
+		eig(M) #valeur propre de M
+		disp("Erreur d'approximation de hl\n")
+		E =  sum(sum(abs(hl - M)) )
 end##============================================================================##
 
 ##================ Optimiseur ================================================##
@@ -62,16 +59,21 @@ options.tol(2) = 1.e-8; # sur les conditions d egalite
 options.tol(3) = 1.e-8; # sur le min des multi de lagrange - les conditions d inegalite
 options.maxit = 10;
 
-options.quad = 0# Utilisation solveur quadratique ou non, obligatoire pour TP4
+options.quad = 2# Utilisation solveur quadratique ou non, obligatoire pour TP4
 	#0 sans
 	# 1 avec
 	# 2 les deux
 
 options.rl = 1; #Recherche lineaire
-options.verb = 2;
+options.verb = 0;
 
-if test == '0'    
-	[x, lme, lmi, info] = res(castest, options)
+if test == '0'
+	
+	options.quad = 1
+	[x, lme, lmi, ~] = res(castest, options);
+	
+	options.quad = 2
+	[x, lme, lmi, ~] = res(castest, options);
 
 	
 	
@@ -139,13 +141,10 @@ if test == '0'
 		test += (dot(hl*N(:,i),N(:,i))<=0);
 		end  
 		fprintf('----------------------------------\n');
-	end;
-	
-	
-  fprintf('%.5f, ',x(1:length(x)/2))
-  fprintf('\n') 
-  fprintf('%.5f, ',x(length(x)/2+1:length(x)))
+		
+		fprintf('%.5f,\n%.5f,',x(1:length(x)/2),x(length(x)/2+1:length(x)))
 
-  fprintf('\n')
+	  fprintf('\n')
+	end;
 end
 ##============================================================================##

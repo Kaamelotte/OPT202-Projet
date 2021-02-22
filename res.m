@@ -1,4 +1,4 @@
-function [x, lme, lmi, info] = res(castest, options, ...
+function [x, lme, lmi, info, x2] = res(castest, options, ...
 													  color_init = [0,0.42,0.7], color_res_1 = [0.83,0.35,0.17], color_res_2 = [0.6,0.3,0.6])
 
 	global A B L R S color
@@ -9,21 +9,19 @@ function [x, lme, lmi, info] = res(castest, options, ...
 		return 
 	end ##====================================================================##
 	
-	
-	
-	[L, x, A, B, R, S] = casTest(castest);
+	[L, xy, A, B, R, S] = casTest(castest);
 	
 	##=== Graphe de l'initialisation ===========================================##
 		figure('Name',['Methode de Newton: cas test ',castest]);
 		hold on;
-		chs(6, x );
+		chs(6, xy );
 		color = color_init;
-		chs(1, x );
+		chs(1, xy );
 		##=== Resolution par l'optimiseur ==========================================##
 		if (options.quad == 0)
-			[x,lme, lmi, info] = sqp(@chs, x, [], [], options);
+			[x,lme, lmi, info] = sqp(@chs, xy, [], [], options);
 		else
-			[x, lme, lmi, info] = oqs(@chs, x, [], [], options);
+			[x, lme, lmi, info] = oqs(@chs, xy, [], [], options);
 		end;
 		
 		##=== Graphe de la solution ================================================##
@@ -31,7 +29,7 @@ function [x, lme, lmi, info] = res(castest, options, ...
 		chs(1, x, lme, lmi);
 		
 		if(options.quad == 2)
-			[x, lme, lmi, info] = oqs(@chs, x, [], [], options);
+			[x, lme, lmi, info] = oqs(@chs, xy, [], [], options);
 			color = color_res_2;
 			chs(1, x, lme, lmi);
 			legend('Initialisation','resultat_1', 'resultat_2');
@@ -39,13 +37,11 @@ function [x, lme, lmi, info] = res(castest, options, ...
 			legend('Initialisation','resultat');
 		end
 		
-
 		title({ ['Methode de Newton: cas test  ',castest]; ...
 			['Nbr Iterations: ', num2str(info.niter)]; "";"" });
 
 		print(["figure_", castest,"_",num2str(options.rl), ".jpg"]);  
 		hold off
-		##==========================================================================##
-		
+		##==========================================================================##		
   return
 end
