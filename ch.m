@@ -1,5 +1,6 @@
 clear()
 close()
+clc()
 
 global A B L R S color
 
@@ -18,8 +19,8 @@ test = '0'
 options.tol(1) = 1.e-8; # sur le gred du laplacien
 options.tol(2) = 1.e-8; # sur les conditions d egalite
 options.tol(3) = 1.e-8; # sur le min des multi de lagrange - les conditions d inegalite
-options.maxit = 10;
-options.quad = 1
+options.maxit = 100;
+options.quad = 1;
 	#0 sans solveur quadratique
 	# 1 avec solveur quadratique
 	# 2 avec et sans solveur quadratique
