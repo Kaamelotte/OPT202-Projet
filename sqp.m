@@ -49,7 +49,7 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 	end##================##  
 
 ##=== Boucle principale =======================================================##
-	while true		
+	while true
 		[~,ce,ci,g,ae,ai,~,indic] = simul(4,x,lme);
 		nbSimul += 1;
 		grdl = g + ae' * lme;
@@ -60,7 +60,7 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		normFk = normFkp;
 		
 		##=== Calcul de la direction de descente ===================================##
-		[~,~,~,~,~,~,hl,~] = simul(5,x,lme, []);
+		[~,~,~,~,~,~,hl,~] = simul(5,x,lme, lmi);
 		nbSimul += 1;
 		dF = [ hl, ae'; ae, zeros(m,m) ];
 		F = [ g ; ce ];
@@ -82,10 +82,23 @@ function [x,lme,info] = sqp(simul,x, lme, lmi, options)
 		end ##================##    
 			
 							#####################################
-							##=== Recherche linéaire ==============##
+							##== probleme quadratique osculateur==##
 							#####################################
 							
-##=== Recherche linéaire pour le pas alpha ======================================##
+##=== Recherche lineaire pour le pas alpha ======================================##
+		if length(lmi) != 0
+			"probleme quadratique osculateur"
+			
+			
+			
+		end 
+##=== Fin recherche lineaire =============================================##
+			
+							#####################################
+							##=== Recherche lineaire ==============##
+							#####################################
+							
+##=== Recherche lineaire pour le pas alpha ======================================##
 		if options.rl == 0
 			dphi = F' * dF;     #F(z)^T*F'(z)
 			[alpha, nbSimul] = rl(simul,x, nbSimul, lme, dir, dphi, phi, 1e-4, options);

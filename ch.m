@@ -11,6 +11,7 @@ global A B L R S color
 ##============================================================================##
 
 castest = '2d'
+castest = '2a'
 [L,xy,A,B,R,S] = casTest(castest);
 color = 'r';
 test = 'cholmod'
