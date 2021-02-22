@@ -1,22 +1,5 @@
 function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
-################################################################################
-## sqp :                                                                      ##
-## Renvoie les multiplicateurs de Lagrange et les abscisses et ordonnées des  ##
-## noeuds                                                                     ##
-##                                                                            ##
-## INPUT  - simul : spécification du simulateur                               ##
-##        - x : vecteur contenant la valeur initiale                          ##
-##        - lme : vecteur contenant les multiplcicateurs de Lagrange intiale   ##
-##        - options : structure spéciafiant les paramètres de fonctionnement  ##
-##                    de l’algorithme                                         ##
-##                                                                            ##
-## OUTPUT - x : vecteur contenant la valeur finale                            ##
-##        - lme : vecteur contenant les multiplcicateurs de Lagrange finaux    ##                                                      ##
-##        - info : structure donnant des informations sur le comportement du  ##
-##                  solveur                                                   ##
-##                                                                            ##
-##############################################################################
-	  
+
 	##=== Vérification de la consistance des arguments d'entrée ========================##
 	n = length(x);
 	if mod(n,2) ~= 0
