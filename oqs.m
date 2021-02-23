@@ -28,11 +28,12 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 							#####################################
 	nbIter = 0;
 	nbSimul = 0;
+	alpha = 1;
 	
 	if (options.verb == 1)##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
 		fprintf('%4s %7s %10s %7s %10s %10s %11s %9s %10s %9s',...
-					'iter','|ce|','|ci|', '|gl|','|x|','|lme|','|lmi-ci|', '|E|');
+					'iter','|ce|','|ci|', '|gl|','|x|','|lme|','|lmi|', '|E|');
 		fprintf('\n---------------------------------------------------------------------------------\n');
 	end##================##  
 	
@@ -46,17 +47,35 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 		nbSimul += 1;
 		 [L, d, flag] = cholmod(hl, 1.e-5, 1.e+5);
 		 M = L*diag(d)*L';
-		grdl = g + ae' * lme;
-		 		 		 
-		 #[d, obj, information, lm] = qp (X0, H, Q,  A,    B, LB, UB, A_LB, A_IN, A_UB)
-		 [d, obj, information, lm] = qp ( d, M,  g, ae, -ce, [] ,  [] ,     []  ,    ai  ,   -ci   );
-		
+		 
+		 grdl = g + ae' * lme + ai'*lmi;
+		 #[d, obj, information, lm] = qp (X0             , H, Q,  A,    B, LB, UB, A_LB, A_IN, A_UB)
+		 [dir, obj, information, lm] = qp (ones(n,1) , M,  g, ae, -ce, [] ,  [] ,     []  ,    ai  ,   -ci   );
+		if information.info != 0
+			info.status = information.info;
+			info.niter = nbIter;
+			break;
+		end
 		##=====================================================================##
+		
+##=== Recherche lineaire pour le pas alpha ======================================##
+		if options.rl == 0
+			[ae; ai]
+			size([ae; ai])
+			size(hl)
+			me
+			mi
+			dF = [ hl, [ae;ai]' ; [ae; ai], zeros(me,mi) ];
+			F = [ g ; [ce; ci] ];
+			dphi = F' * dF;     #F(z)^T*F'(z)
+			[alpha, nbSimul] = rl(x, lme, lmi, [dir lm], simul, nbSimul, dphi, phi, options);
+		end 
+##=== Fin recherche lineaire ===================================================##
 			
-		##=== Calcul des nouveaux paramètres pour Newton ========================##
-		x = x + d;
-		lme = lm(1:me); #ordre ?
-		lmi = lm(me+1:me +mi);
+		##=== Calcul des nouveaux parametres pour Newton ==========================##
+		x = x + alpha*dir;
+		lme = (1-alpha)*lme + alpha* lm(1:me); #ordre ?
+		lmi = (1-alpha)*lmi + alpha* lm(me+1:me +mi);
 		
 		nbIter = nbIter + 1;
 		info.niter = nbIter;
@@ -75,7 +94,7 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 							#####################################	
 		
 		##=== Test d'optimalité =================================================##
-		if (norm(grdl,inf) < options.tol(1)) && (norm(ce,inf) < options.tol(2)) && (norm(lmi-ci,inf) < options.tol(3) )
+		if (norm(grdl,inf) < options.tol(1)) && (norm(ce,inf) < options.tol(2)) && (norm(min(lmi,-ci),inf) < options.tol(3) )
 			info.status = 0; #Solution trouvée
 			info.niter = nbIter;
 			break; #Sortie de Newton

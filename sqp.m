@@ -54,7 +54,7 @@ function [x,lme,info] = sqp(simul,x, lme, options)
 
 ##=== Boucle principale =======================================================##
 	while true
-		[~,ce,ci,g,ae,~,~,indic] = simul(4,x,lme);
+		[~,ce,~,g,ae,~,~,indic] = simul(4,x,lme);
 		nbSimul += 1;
 		grdl = g + ae' * lme;
 		
@@ -93,7 +93,7 @@ function [x,lme,info] = sqp(simul,x, lme, options)
 ##=== Recherche lineaire pour le pas alpha ======================================##
 		if options.rl == 0
 			dphi = F' * dF;     #F(z)^T*F'(z)
-			[alpha, nbSimul] = rl(simul,x, nbSimul, lme, dir, dphi, phi, 1e-4, options);
+			[alpha, nbSimul] = rl( x, lme, [], dir, simul, nbSimul, dphi, phi, options);
 		end 
 ##=== Fin recherche lineaire ===================================================##
 			

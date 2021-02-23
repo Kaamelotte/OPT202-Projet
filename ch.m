@@ -3,21 +3,23 @@ global A B L R S color lgd;
 color = 'r';  lgd = "resultat";
 ##=================== Cas test: ==============================================##
 ## TP1: '1 
-## TP2: '2a' '2b' '2c' '2d'
+## TP2:        '2a' '2b' '2c' '2d'
 ## TP3: '2d' '3a' '3b' '3c'
-## TP4: '4a' '4b' '4c'
+## TP4:        '4a' '4b' '4c'
+## TP5:        '5a' '5b' '5c'
 ##=========================================================================##
 
 castest = '4c';
 test = '0';
 
 ##================ Optimiseur ===============================================##
-options = option();
+options = option(200);
 options.save = 0;
+options.rl = 1;
 
 if test == '0'	
 	[x, lme, lmei, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
-	
+	info.status
 	if info.status == 2
 		fprintf('--------Condition non remplis--------\n');
 		fprintf('%8s %10s %10s \n',...
