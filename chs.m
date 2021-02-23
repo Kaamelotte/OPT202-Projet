@@ -110,9 +110,10 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic, xy, lme = [], lmi = [])
 		aey = spdiags([ [ (ym - yp)(2:nb) ;0], [yp-ym] ], -1:0, nb, nn);
 		ae = sparse(2*[aex,aey]);
       
+        #repmat(S,nn,1) = [s_1...s_p; s_1...s_p; ... ; s_1...s_p]
+		aix= spdiags(repmat(S,nn,1), [0:-nn: -p*nn], p*nn , nn); %la colonne k (=(s_k...s_k)') sur la diagonale k*nn
 		aiy = repmat(-spdiags(ones(nn,1),0,nn,nn),p,1);
-		aix= spdiags(repmat(S,nn,1), [0:-nn: -p*nn], p*nn , nn);
-		
+        
 		ai = [ aix , aiy ];
       
 		indic = 0;
