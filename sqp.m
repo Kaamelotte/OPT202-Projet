@@ -1,4 +1,4 @@
-function [x,lme, lmi,info] = sqp(simul,x, lme, lmi, options)
+function [x,lme,info] = sqp(simul,x, lme, options)
 ################################################################################
 ## sqp :                                                                      ##
 ## Renvoie les multiplicateurs de Lagrange et les abscisses et ordonnees des  ##
@@ -30,10 +30,9 @@ function [x,lme, lmi,info] = sqp(simul,x, lme, lmi, options)
 	end;##====================================================================##
 	
 	##=== Calcul des multiplicateurs lagrangiens d'egalite=============================##
-    if length(lme) == 0 || length(lmi) == 0
-		[~,~,~,g,ae,ai,~,indic] = simul(4,x,lme, lmi);
+    if length(lme) == 0
+		[~,~,~,g,ae,~,~,indic] = simul(4,x,lme);
 		lme = -ae'\g;
-		lmi = -ai'\g;
     end
 	m = length(lme);
 	##=======================================================================##
@@ -55,7 +54,7 @@ function [x,lme, lmi,info] = sqp(simul,x, lme, lmi, options)
 
 ##=== Boucle principale =======================================================##
 	while true
-		[~,ce,ci,g,ae,ai,~,indic] = simul(4,x,lme);
+		[~,ce,ci,g,ae,~,~,indic] = simul(4,x,lme);
 		nbSimul += 1;
 		grdl = g + ae' * lme;
 		
@@ -65,7 +64,7 @@ function [x,lme, lmi,info] = sqp(simul,x, lme, lmi, options)
 		normFk = normFkp;
 		
 		##=== Calcul de la direction de descente ===================================##
-		[~,~,~,~,~,~,hl,~] = simul(5,x,lme, []);
+		[~,~,~,~,~,~,hl,~] = simul(5,x,lme);
 		nbSimul += 1;
 		dF = [ hl, ae'; ae, zeros(m,m) ];
 		F = [ g ; ce ];

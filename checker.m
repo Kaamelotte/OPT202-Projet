@@ -6,28 +6,38 @@ function [] = checker(castest, test = 1)
 		case '1'   
 			disp('trace de la chaine');
 			hold on;
-			chs(1,xy,[], []);
-			chs(6,xy,[], []);
+			chs(1,xy);
+			chs(6,xy);
 			hold off;
 		case 'c'
 			disp("calcul de l'energie et des contraintes");
-			[e,ce,ci,~,~,~,~,indic] = chs(2,xy,[],[])
+			[e,ce,ci,~,~,~,~,indic] = chs(2,xy)
 		case 'g' 
 			disp("calcul du gradient de e et de la jacobienne de c");
-			[~,~,~,g,ae,ai,~,indic] = chs(4,xy,[],[]);
+			[~,~,~,g,ae,ai,~,indic] = chs(4,xy);
 			g
 			ae = full(ae)
 			ai = full(ai)
 			size(ai)
 		case 'hl'
 			disp("calcul du hessien du lagrangien");
-			[~,~,~,~,~,~,hl,indic] = chs(5,xy,[],[]);
+			[~,~,~,~,~,~,hl,indic] = chs(5,xy);
 			hl = full(hl)
 			valuerPropre = eig(hl)
 			sum(eig(hl)>= 0)/length(eig(hl)) 
 		case 'grad'
 			disp("verification du gradient de l'energie potentielle"); 
 			verifierGradient(xy);
+        case 'lm' 
+            disp("Multiplicateurs de lagrange")
+			[~,~,~,g,ae,ai,~,indic] = chs(4,x);
+			lme = -ae'\g
+			lmi = -ai'\g
+        case 'L'
+            disp("Longueur de la chaine")
+			[~,ce,~,~,~,~,~,indic] = chs(2,xy);
+			longueur = L
+			longueur_actuelle = sqrt( ce + L.^2 )
 		case 'cholmod' 
 			disp("Test de la fonction cholmod\n"); 
 			#Tolerance
@@ -45,7 +55,7 @@ function [] = checker(castest, test = 1)
 			disp(eig(M)) #valeur propre de M
 			disp("Erreur d'approximation de hl:\n")
 			E =  norm(hl - M,inf)
-	end##============================================================================##
+	end##====================================================================##
 	
 	return
 end

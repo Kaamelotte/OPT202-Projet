@@ -1,4 +1,4 @@
-function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic,xy,lme,lmi)
+function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic, xy, lme = [], lmi = [])
 ################################################################################
 ## ch :
 ## Renvoie les multiplicateurs de Lagrange et les abscisses et ordonnees 
