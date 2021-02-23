@@ -1,6 +1,6 @@
 function [L,xy,A,B, R, S] = casTest(numcas)
-	R = [];
-	S = [];
+	R = [1];
+	S = [2];
   ##================================== TP1 ===================================##
   if numcas == '1' || numcas == '2a'
     #Longueurs des barres

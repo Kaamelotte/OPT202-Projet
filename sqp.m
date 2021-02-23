@@ -1,20 +1,21 @@
 function [x,lme,info] = sqp(simul,x, lme, options)
 ################################################################################
-## sqp :                                                                      ##
-## Renvoie les multiplicateurs de Lagrange et les abscisses et ordonnees des  ##
-## noeuds                                                                     ##
-##                                                                            ##
-## INPUT  - simul : specification du simulateur                               ##
-##        - x : vecteur contenant la valeur initiale                          ##
-##        - lme : vecteur contenant les multiplcicateurs de Lagrange intiale   ##
-##        - options : structure speciafiant les parametres de fonctionnement  ##
-##                    de l’algorithme                                         ##
-##                                                                            ##
-## OUTPUT - x : vecteur contenant la valeur finale                            ##
-##        - lme : vecteur contenant les multiplcicateurs de Lagrange finaux    ##                                                      ##
-##        - info : structure donnant des informations sur le comportement du  ##
-##                  solveur                                                   ##
-##                                                                            ##
+## sqp :
+## Renvoie les multiplicateurs de Lagrange et les abscisses et ordonnees des  
+## noeuds
+##
+## INPUT  - simul : specification du simulateur
+##        - x : vecteur contenant la valeur initiale
+##        - lme : vecteur contenant les multiplcicateurs de Lagrange intiale
+##        - options : structure speciafiant les parametres de fonctionnement 
+##                    de l’algorithme
+##
+## OUTPUT - x : vecteur contenant la valeur finale
+##        - lme : vecteur contenant les multiplicateurs de Lagrange pour les contrainte d egalite
+##        - lmi : vecteur contenant les multiplicateurs de Lagrange pour les contrainte d inegalite
+##
+##        - info : structure donnant des informations sur le comportement du solveur
+##
 ##############################################################################
 	  
 	##=== Verification de la consistance des arguments d'entree ========================##
@@ -44,6 +45,7 @@ function [x,lme,info] = sqp(simul,x, lme, options)
 	nbSimul = 0;
 	alpha = 1;  #pas initial = pas unite
 	normFk = 1;
+	#grdlp = 1;
   
 	if (options.verb == 1)##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
@@ -57,6 +59,8 @@ function [x,lme,info] = sqp(simul,x, lme, options)
 		[~,ce,~,g,ae,~,~,indic] = simul(4,x,lme);
 		nbSimul += 1;
 		grdl = g + ae' * lme;
+		#G = grdl/grdlp
+		#grdlp = grdl;
 		
 		##===Quotient des normes des derives de Fk==================================##
 		normFkp = max(norm(ce,Inf),norm(grdl,Inf));
@@ -67,13 +71,13 @@ function [x,lme,info] = sqp(simul,x, lme, options)
 		[~,~,~,~,~,~,hl,~] = simul(5,x,lme);
 		nbSimul += 1;
 		dF = [ hl, ae'; ae, zeros(m,m) ];
-		F = [ g ; ce ];
-		dir = -dF\F;    
+		F = [ grdl ; ce ];
+		dir = -dF\F; #(dk,muk)
 		##===================================================================##
 		
 		#Faut lui trouver une petit place a ce petit chou
 		phi = 0.5 * F' * F; #0.5*||F(z)||^2
-			
+		
 		##===================================================================##
 			
 		if options.verb > 0 ##=== Impression ===##
@@ -89,7 +93,7 @@ function [x,lme,info] = sqp(simul,x, lme, options)
 							#####################################
 							##=== Recherche lineaire ==============##
 							#####################################
-							
+			
 ##=== Recherche lineaire pour le pas alpha ======================================##
 		if options.rl == 0
 			dphi = F' * dF;     #F(z)^T*F'(z)
@@ -99,7 +103,7 @@ function [x,lme,info] = sqp(simul,x, lme, options)
 			
 		##=== Calcul des nouveaux parametres pour Newton ==========================##
 		x = x + alpha*dir(1:n);
-		lme = (1-alpha)*lme + alpha*dir(n+1:length(dir));
+		lme = lme + alpha*dir(n+1:length(dir));
 			
 		nbIter = nbIter + 1;
 		info.niter = nbIter;
