@@ -26,10 +26,6 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 			[x, lme, lmi, info] = oqs(@chs, xy, [], [], options);
 		end;
 		
-		if info.status != 0
-			return
-		end
-		
 		##=== Graphe de la solution ================================================##
 		
 		if(options.quad != 2)
