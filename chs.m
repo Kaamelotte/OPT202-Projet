@@ -94,10 +94,8 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic, xy, lme = [], lmi = [])
         ##===Contraintes=================##
         ce = (xp-xm).^2 + (yp-ym).^2 - L.^2;
 
-        R_ = reshape(repmat(R,1,nn)',p*nn,1);   #(R1...R1 R2...R2 ... Rp...Rp)'
-        S_ = reshape(repmat(S,1,nn)',p*nn,1);   #(S1...S1 S2...S2 ... Sp...Sp)'
-        #repmat(x,p,1)=(x1...xnn x1...xnn ... x1...xnn)'
-        #repmat(y,p,1)=(y1...ynn y1...ynn ... y1...ynn)'
+        R_ = reshape(repmat(R,1,nn)',p*nn,1);#(R1 ... R1, R2 ... R2 ... Rp ... Rp)
+        S_ = reshape(repmat(S,1,nn)',p*nn,1);
         ci = R_ + repmat(x,p,1).*S_ - repmat(y,p,1);
   
     ##=== Calcul de g, ae et ai ===================================================##
