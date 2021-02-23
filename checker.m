@@ -4,16 +4,16 @@ function [] = checker(castest, test = 1)
 		[L,xy,A,B,R,S] = casTest(castest)
 	end
 	switch test
-		case '1' ##=== Trace de la chaine ===##	  
+		case '1'   
 			disp('trace de la chaine');
 			hold on;
 			chs(1,xy);
 			chs(6,xy);
 			hold off;
-		case 'c'  ##=== Energie potentielle et contraintes ======##
+		case 'c'
 			disp("calcul de l'energie et des contraintes");
 			[e,ce,ci,~,~,~,~,indic] = chs(2,xy)
-		case 'g'  ##=== Gradient de e et jacobienne de c  =================##
+		case 'g' 
 			disp("calcul du gradient de e et de la jacobienne de c");
 			[~,~,~,g,ae,ai,~,indic] = chs(4,xy);
 			g
@@ -25,33 +25,37 @@ function [] = checker(castest, test = 1)
 			hl = full(hl)
 			valuerPropre = eig(hl)
 			sum(eig(hl)>= 0)/length(eig(hl)) 
-		case 'grad' ##=== Verification du gradient de l'energie potentielle ===##
+		case 'grad'
 			disp("verification du gradient de l'energie potentielle"); 
 			verifierGradient(xy);
-		case 'lm' ##=== Multiplicateur de lagrange===##
+        case 'lm' 
+            disp("Multiplicateurs de lagrange")
 			[~,~,~,g,ae,ai,~,indic] = chs(4,x);
 			lme = -ae'\g
 			lmi = -ai'\g
-		case 'L' ##=== longueur de la chaine ===##
+        case 'L'
+            disp("Longueur de la chaine")
 			[~,ce,~,~,~,~,~,indic] = chs(2,xy);
 			longueur = L
 			longueur_actuelle = sqrt( ce + L.^2 )
-		case 'cholmeod' ##=== Test de la fonction cholmeod ===##
-			disp("Test de la fonction cholmeod\n"); 
+		case 'cholmod' 
+			disp("Test de la fonction cholmod\n"); 
 			#Tolerance
 			tol_small = 1.e-5; 
 			tol_big = 1.e+5;
-			[~,~,~,~,~,~,hl,indic] = chs(5,xy);
-			[L, d, flag] = cholmeod(hl, tol_small, tol_big);
-			full(hl)
-			full(L)
+			[~,~,~,~,~,~,hl,indic] = chs(5,xy,[],[]);
+			[L, d, flag] = cholmod(hl, tol_small, tol_big);
+			disp('hl=')
+            disp(full(hl))
+            disp('L=')
+			disp(full(L))
 			D = diag(d)
 			M = L*D*L'
-			disp("M est bien defini positive\n")
-			eig(M) #valeur propre de M
-			disp("Erreur d'approximation de hl\n")
+			disp("M est bien definie positive\nSes valeurs propres sont:")
+			disp(eig(M)) #valeur propre de M
+			disp("Erreur d'approximation de hl:\n")
 			E =  norm(hl - M,inf)
-	end##============================================================================##
+	end##====================================================================##
 	
 	return
 end
