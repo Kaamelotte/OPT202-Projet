@@ -1,8 +1,9 @@
 function [] = checker(castest, test = 1)
 	global A B L R S color lgd;
-	if test != "-1"
-		[L,xy,A,B,R,S] = casTest(castest)
+	if strcmp(test, "-1")
+		return
 	end
+	[L,xy,A,B,R,S] = casTest(castest)
 	switch test
 		case '1'   
 			disp('trace de la chaine');
@@ -19,7 +20,7 @@ function [] = checker(castest, test = 1)
 			g
 			ae = full(ae)
 			ai = full(ai)
-		case 'hl' ##=== Hessien du lagrangien ============##
+		case 'hl' 	
 			disp("calcul du hessien du lagrangien");
 			[~,~,~,~,~,~,hl,indic] = chs(5,xy);
 			hl = full(hl)
