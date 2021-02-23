@@ -2,16 +2,16 @@ clear(); close(); clc();
 global A B L R S color lgd;
 color = 'r';  lgd = "resultat";
 ##=================== Cas test: ==============================================##
-## TP1: '1																	  ##
-## TP2: '2a' '2b' '2c' '2d'                                                   ##
-## TP3: '2d' '3a' '3b' '3c'                                                   ##
-## TP4: '4a' '4b' '4c'                                                    ##
-##============================================================================##
+## TP1: '1 
+## TP2: '2a' '2b' '2c' '2d'
+## TP3: '2d' '3a' '3b' '3c'
+## TP4: '4a' '4b' '4c'
+##=========================================================================##
 
 castest = '4b'
-test = 'g'
+test = 'cholmod'
 
-##================ Optimiseur ================================================##
+##================ Optimiseur ===============================================##
 options = option();
 options.save = 0;
 
@@ -28,12 +28,11 @@ if test == '0'
 					info.tol(1),info.tol(2), info.tol(3));
 		fprintf('\n--------------------------------------\n');
 	end	
-else##================ Simulateur ================================================##
+else##================ Simulateur ============================================##
 	checker(castest, test);
 end
 
 if options.verb == 3 &&  test == '0'
-	##=== calcul de la hessienne reduite =======================================##
 	disp("Calcul de la hessienne reduite")
 	[~,ce,ci,g,ae,ai,~,indic] = chs(4,x,lme,[]);
 	[~,~,~,~,~,~,hl,indic] = chs(5,x,lme,[]);
@@ -41,7 +40,7 @@ if options.verb == 3 &&  test == '0'
 	N = null(ae)
 	eig(N'*hl*N)
 
-	##=== Conditions suffisantes d'ordre 2 =====================================##
+	##=== Conditions suffisantes d'ordre 2 ===##
 	fprintf('---------------------------------\n');
 	fprintf('Verification des CS2:\n');
 	fprintf('---------------------------------\n');
@@ -58,8 +57,8 @@ if options.verb == 3 &&  test == '0'
 	%fprintf('---------------------------------\n');
 	test = 0;
 	for i=1:size(N,2)
-	fprintf("|   <Grd^2l(x,lme).z|z> = %f\n",dot(hl*N(:,i),N(:,i)));
-	test += (dot(hl*N(:,i),N(:,i))<=0);
+	    fprintf("|   <Grd^2l(x,lme).z|z> = %f\n",dot(hl*N(:,i),N(:,i)));
+	    test += (dot(hl*N(:,i),N(:,i))<=0);
 	end  
 	fprintf('----------------------------------\n');
 	
@@ -67,4 +66,4 @@ if options.verb == 3 &&  test == '0'
 
   fprintf('\n')
 end;
-##============================================================================##
+##=========================================================================##
