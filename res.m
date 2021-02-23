@@ -19,7 +19,7 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 		chs(1, xy);
 		#legend(plt, "Initialisation");
 		##=== Resolution par l'optimiseur ==========================================##
-		lmi = []
+		lmi = [];
 		if (options.quad == 0)
 			[x,lme, info] = sqp(@chs, xy, [], options);
 		else
