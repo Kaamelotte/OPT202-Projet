@@ -10,13 +10,15 @@ color = 'r';  lgd = "resultat";
 ## TP5:        '5a' '5b' '5c'
 ##=========================================================================##
 
-castest = '4c';
+castest = '2d';
 test = '0';
 
 ##================ Optimiseur ===============================================##
-options = option(200);
+options = option();
+options.quad = 0;
+options.verb = 2;
 options.save = 0;
-options.rl = 1;
+options.rl = 0;
 
 if test == '0'	
 	[x, lme, lmei, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
