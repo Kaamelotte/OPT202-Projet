@@ -33,10 +33,12 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 			color = color_res_1;
 			chs(1, x, lme, lmi);
 		else 
-			lgd = "Resultat_1";
-			[x, lme, lmi, info] = oqs(@chs, xy, [], [], options);
 			color = color_res_2;
 			lgd = "Resultat_2";
+			chs(1, x, lme, lmi);
+			[x, lme, info] = sqp(@chs, xy, [], options);
+			lgd = "Resultat_1";
+			color = color_res_1;
 			chs(1, x, lme, lmi);
 		end
 		legend;
