@@ -57,10 +57,9 @@ function [x,lme,info] = sqp(simul,x, lme, options)
 ##=== Boucle principale =======================================================##
 	while true
 		[~,ce,~,g,ae,~,~,indic] = simul(4,x,lme);
+
 		nbSimul += 1;
 		grdl = g + ae' * lme;
-		#G = grdl/grdlp
-		#grdlp = grdl;
 		
 		##===Quotient des normes de Fk ============================================##
 		normFkp = max(norm(ce,Inf),norm(grdl,Inf));
@@ -72,6 +71,7 @@ function [x,lme,info] = sqp(simul,x, lme, options)
 		nbSimul += 1;
 		dF = [ hl, ae'; ae, zeros(m,m) ];
 		F = [ grdl ; ce ];
+		
 		dir = -dF\F; #(dk,muk)
 		##===================================================================##
 		
