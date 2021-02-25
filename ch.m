@@ -17,14 +17,12 @@ options = option(100);
 options.quad = 0;
 options.verb = 1;
 options.save = 0;
-options.rl = 1;
 options.rl = 0;
 
 if test == '0'	
 	[x, lme, lmei, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
 	info.status
 	if info.status == 2
-		fprintf('--------Condition non remplis--------\n');
         fprintf('--------Condition non remplis--------\n');
 		fprintf('%8s %10s %10s \n',...
 					'|gl|','|ce|','|lmei-ci|');
