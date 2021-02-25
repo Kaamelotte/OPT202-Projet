@@ -10,15 +10,17 @@ function [x,lme, lmi, info] = oqs(simul,x, lme, lmi, options)
 	##=== Verification que l'utilisateur de demande pas plus d'info qu'il n'en veut=========##
 	if options.verb == 2
 		options.verb = 1;
-	end;##====================================================================##
+	end ##====================================================================##
 	
-
 	##=== Calcul des multiplicateurs lagrangiens d'égalité=============================##
-    if length(lme) == 0 || length(lmi) == 0
+	if length(lme) == 0 
+		    [~,~,~,g,ae,ai,~,indic] = chs(4,x,lme, lmi);
+		    lme = -ae'\g;
+	end
+	if length(lmi) == 0
 		[~,~,~,g,ae,ai,~,indic] = chs(4,x,lme, lmi);
-		lme = -ae'\g;
 		lmi = -ai'\g;
-    end
+	end
 	me = length(lme);
 	mi = length(lmi);
 	##=======================================================================##

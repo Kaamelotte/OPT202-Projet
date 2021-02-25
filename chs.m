@@ -126,9 +126,12 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic, xy, lme = [], lmi = [])
     ##=== Calcul de hl ==========================================================##
     if indic == 5
 	    ##=== Calcul des multiplicateurs lme et lmi ===##
-        if length(lme) == 0 || length(lmi) == 0
+        if length(lme) == 0 
 		    [~,~,~,g,ae,ai,~,indic] = chs(4,xy,lme, lmi);
 		    lme = -ae'\g;
+        end
+        if length(lmi) == 0
+		    [~,~,~,g,ae,ai,~,indic] = chs(4,xy,lme, lmi);
 		    lmi = -ai'\g;
         end
 	    m = length(lme);
