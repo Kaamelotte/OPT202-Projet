@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 clear(); close(); clc();
 global A B L R S color lgd;
 color = 'r';  lgd = "resultat";
@@ -30,6 +31,32 @@ options.rl = 0;
 if test == '0'	
 	[x, lme, lmei, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
 	info.status
+=======
+clear()
+close()
+clc()
+
+global A B L R S color lgd
+
+##=================== Cas test: ==============================================##
+## TP1: '1																	  ##
+## TP2: '2a' '2b' '2c' '2d'                                                   ##
+## TP3: '2d' '3a' '3b' '3c'                                                   ##
+## TP4: '4a' '4b' '4c'                                                    ##
+##============================================================================##
+
+castest = '4b'
+color = 'r';
+lgd = "resultat";
+test = '0'
+
+##================ Optimiseur ================================================##
+options = option();
+
+if test == '0'	
+	[x, lme, lmi, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
+	
+>>>>>>> Stashed changes
 	if info.status == 2
         fprintf('--------Condition non remplis--------\n');
 		fprintf('%8s %10s %10s \n',...
@@ -40,10 +67,90 @@ if test == '0'
 					info.tol(1),info.tol(2), info.tol(3));
 		fprintf('\n--------------------------------------\n');
 	end	
+<<<<<<< Updated upstream
 else##================ Simulateur ============================================##
 	checker(castest, test);
 end
 
+=======
+end
+
+
+##================ Simulateur ================================================##
+[L,xy,A,B,R,S] = casTest(castest);
+switch test
+	case '1' ##=== Trace de la chaine ===##	  
+		disp('trace de la chaine');
+		hold on;
+		chs(1,xy,[], []);
+		chs(6,xy,[], []);
+		hold off;
+	case 'c'  ##=== Energie potentielle et contraintes ======##
+		disp("calcul de l'energie et des contraintes");
+		[e,ce,ci,~,~,~,~,indic] = chs(2,xy,[],[])
+	case 'g'  ##=== Gradient de e et jacobienne de c  =================##
+		disp("calcul du gradient de e et de la jacobienne de c");
+		[~,~,~,g,ae,ai,~,indic] = chs(4,xy,[],[])
+	case 'hl' ##=== Hessien du lagrangien ============##
+		disp("calcul du hessien du lagrangien");
+		[~,~,~,~,~,~,hl,indic] = chs(5,xy,[],[]);
+		hl = full(hl)
+		valuerPropre = eig(hl)
+		sum(eig(hl)>= 0)/length(eig(hl)) 
+	case 'grad' ##=== Verification du gradient de l'energie potentielle ===##
+		disp("verification du gradient de l'energie potentielle"); 
+		verifierGradient(xy);
+	case 'cholmod' ##=== Test de la fonction cholmod ===##
+		disp("Test de la fonction cholmod\n"); 
+		#Tolerance
+		tol_small = 1.e-5; 
+		tol_big = 1.e+5;
+		[~,~,~,~,~,~,hl,indic] = chs(5,xy,[],[]);
+		[L, d, flag] = cholmod(hl, tol_small, tol_big);
+		full(hl)
+		full(L)
+		D = diag(d)
+		M = L*D*L'
+		disp("M est bien defini positive\n")
+		eig(M) #valeur propre de M
+		disp("Erreur d'approximation de hl\n")
+		E =  norm(hl - M,inf)
+end##============================================================================##
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+>>>>>>> Stashed changes
 if options.verb == 3 &&  test == '0'
 	disp("Calcul de la hessienne reduite")
 	[~,ce,ci,g,ae,ai,~,indic] = chs(4,x,lme,[]);
