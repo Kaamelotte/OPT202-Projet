@@ -9,6 +9,7 @@ color = 'r';  lgd = "resultat";
 ## TP5:        '5a' '5b' '5c'
 ##=========================================================================##
 
+<<<<<<< Updated upstream
 castest = '2b';
 test = '0';
 
@@ -16,6 +17,13 @@ test = '0';
 options = option(100);
 options.quad = 0;
 options.verb = 1;
+=======
+castest = '2a';
+test = '0';
+
+##================ Optimiseur ===============================================##
+options = option(200,0,2);
+>>>>>>> Stashed changes
 options.save = 0;
 options.rl = 0;
 
