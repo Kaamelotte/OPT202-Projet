@@ -19,6 +19,7 @@ options.verb = 1;
 options.save = 0;
 options.rl = 0;
 
+
 if test == '0'	
 	[x, lme, lmei, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
 	info.status
