@@ -62,7 +62,7 @@ function [x,lme,info] = sqp(simul,x, lme, options)
 		#G = grdl/grdlp
 		#grdlp = grdl;
 		
-		##===Quotient des normes des derives de Fk==================================##
+		##===Quotient des normes de Fk ============================================##
 		normFkp = max(norm(ce,Inf),norm(grdl,Inf));
 		Q = normFkp / normFk^2;
 		normFk = normFkp;
@@ -125,6 +125,7 @@ function [x,lme,info] = sqp(simul,x, lme, options)
 			info.status = 2; #Sortie de l'algo car pas de convergence
 			info.tol(1) = norm(grdl,inf);
 			info.tol(2) = norm(ce,inf);
+            info.tol(3) = 0;
 			break; 
 		end ##==================================================================##
 	end
