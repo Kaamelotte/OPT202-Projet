@@ -23,7 +23,7 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 		if (options.quad == 0)
 			[x,lme, lmi info] = sqp(@chs, xy, [], [], options);
 		else
-			[x, lme, lmi, info] = oqs(@chs, xy, [], [], options);
+			[x, lme, lmi, info] = sqp(@chs, xy, [], [], options);
 		end;
 		
 		##=== Graphe de la solution ================================================##

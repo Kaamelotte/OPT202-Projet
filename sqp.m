@@ -58,10 +58,12 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 
 ##=== Boucle principale =======================================================##
 	while true
+		#=== Mise a jour de donnees ==============================================##
 		[~,ce,ci,g,ae,ai,~,indic] = simul(4,x,lme, lmi);		
-		nbSimul += 1;
+		[~,~,~,~,~,~,hl,~] = simul(5,x,lme, lmi);
+		nbSimul += 2;
 		
-		grdl = g + [ae ; ai ]' * [lme ; lmi ]
+		grdl = g + [ae ; ai ]' * [lme ; lmi ];
 			
 		##===Quotient des normes de Fk ===========================================##
 		normFkp = max(norm(ce,Inf),norm(grdl,Inf));
@@ -69,18 +71,18 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		normFk = normFkp;
 		
 		##=== Calcul de la fonction F et de sa derive==================================##
-		[~,~,~,~,~,~,hl,~] = simul(5,x,lme, lmi);
-		nbSimul += 1;
-				
-		dF = [ hl, [ae;ai]' ; [ae; ai], zeros(me+mi,me+mi) ];
-		F = [ grdl ; [ce; ci] ];
-		##=====================================================================##
+		if options.quad == 0 || options.rl == 0 ;
+			dF = [ hl, [ae;ai]' ; [ae; ai], zeros(me+mi,me+mi) ];
+			F = [ grdl ; [ce; ci] ];
+		end ##=================================================================##
 		
 ##=== Calcul de la direction de descente =========================================##
 		if options.quad == 0 				##=== Algorithme de Newton ==========##
 			dir = -dF\F; #(dk,muk)
 			
 		elseif options.quad == 1		##=== Algorithme de Quasi-Newton =====##
+			 [L, d, flag] = cholmod(hl, 1.e-5, 1.e+5);
+			 M = L*diag(d)*L';
 			 #[d, obj, information, lm] = qp (X0             , H, Q,  A,    B, LB, UB, A_LB, A_IN, A_UB)
 			 [dir, obj, information, lm] = qp (ones(n,1) , M,  g, ae, -ce, [] ,  [] ,     []  ,    ai  ,   -ci   );
 			if information.info != 0
@@ -92,25 +94,21 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		end
 ##===Fin calcul de la direction de descente========================================##		
 			
-		#Faut lui trouver une petit place a ce petit chou
-		phi = 0.5 * F' * F; #0.5*||F(z)||^2
-		
 		if options.verb > 0 ##=== Impression ===##
 			if options.verb == 2			
 				fprintf('---------------------------------------------------------------------------------\n');
-				fprintf('%4s %7s %10s %10s %10s %11s %9s %9s\n',...
-						'iter','|gl|','|ce|','|x|','|lme|','alpha','phi','Q');
+				fprintf('%4s %7s %10s %10s %10s %11s %9s\n',...
+						'iter','|gl|','|ce|','|x|','|lme|','alpha','Q');
 			end;
 		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e\n',...
-				  info.niter, norm(grdl,inf),norm(ce,inf),norm(x,inf),norm(lme,inf),alpha,phi,Q);
+				  info.niter, norm(grdl,inf),norm(ce,inf),norm(x,inf),norm(lme,inf),alpha,Q);
 		end ##================##    
 			
-							#####################################
-							##=== Recherche lineaire ==============##
-							#####################################
-			
+	
 ##=== Recherche lineaire pour le pas alpha ======================================##
 		if options.rl == 0
+			#J'ai trouvé une petit place a ce petit chou
+			phi = 0.5 * F' * F; #0.5*||F(z)||^2
 			dphi = F' * dF;     #F(z)^T*F'(z)
 			[alpha, nbSimul] = rl( x, lme, lmi, dir, simul, nbSimul, dphi, phi, options);
 		end 
@@ -129,7 +127,7 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 							#####################################	
 		
 		##=== Test d'optimalite ===================================================##
-		if (norm(grdl,inf) < options.tol(1)) && (norm(ce,inf) < options.tol(2))
+		if (norm(grdl,inf) < options.tol(1)) && (norm(ce,inf) < options.tol(2))  && (norm(min(lmi,-ci),inf) < options.tol(3) )
 			info.status = 0; #Solution trouvee
 			break; #Sortie de Newton
 		end##==================================================================##
@@ -139,7 +137,7 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 			info.status = 2; #Sortie de l'algo car pas de convergence
 			info.tol(1) = norm(grdl,inf);
 			info.tol(2) = norm(ce,inf);
-            info.tol(3) = 0;
+            info.tol(3) = norm(min(lmi,-ci),inf);
 			break; 
 		end ##==================================================================##
 	end
