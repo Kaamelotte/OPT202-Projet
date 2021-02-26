@@ -80,12 +80,12 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		if options.quad == 0 || options.rl == 0 ;
 			dF = [ hl, [ae;ai]' ; [ae; ai], zeros(me+mi,me+mi) ];
 			F = [ grdl ; [ce; ci] ];
-			#Fpq = [ g ; [ce ; ci ] ];
+			Fpq = [ g ; [ce ; ci ] ];
 		end ##=================================================================##
 		
 ##=== Calcul de la direction de descente =========================================##
 		if options.quad == 0 			##=== Algorithme de Newton ==========##
-			dir = -dF\F; #(dk,muk)
+			dir = -dF\Fpq; #(dk,lmpq)
 			
 		elseif options.quad == 1		##=== Algorithme de Josephy-Newton ===##
 			 [L, d, flag] = cholmod(hl, 1.e-5, 1.e+5);
@@ -98,6 +98,10 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 			end
 			dir = [dk; lm ];
 		end
+		dk = dir(1:n);
+		lmepq = dir(n+1:n+me);
+		lmipq = dir(n+me+1:length(dir));
+				
 ##=== Fin calcul de la direction de descente =======================================##		
 			
 		if options.verb > 0 ##=== Impression ===##
@@ -106,8 +110,8 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 				fprintf('%4s %7s %10s %10s %10s %11s %9s\n',...
 						'iter','|gl|','|ce|','|x|','|lme|','alpha','Q');
 			end;
-		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e  \n',...
-				  info.niter, norm(grdl,inf),norm(ce,inf),norm(x,inf),norm(lme,inf),alpha,Q);
+		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e  %10.4e  \n',...
+				  info.niter, norm(grdl,inf),norm(ce,inf),norm(ci,inf),norm(x,inf),norm(lme,inf),norm(lmi,inf), alpha,Q);
 		end ##============================##    
 			
 ##=== Recherche lineaire pour le pas alpha ========================================##
@@ -119,9 +123,9 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 ##=== Fin recherche lineaire ====================================================##
 		
 		##=== Calcul des nouveaux parametres pour Newton ============================##
-		x = x + alpha*dir(1:n);
-		lme = lme + alpha*(dir(n+1:n+me)-lme);
-		lmi = lmi + alpha*(dir(n+me+1:length(dir))-lmi);
+		x = x + alpha*dk;
+		lme = lmepq; # lme + alpha*;
+		lmi = lmipq; # lmi + alpha*;
 		
 		info.niter = info.niter + 1;
 		##=====================================================================##

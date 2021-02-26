@@ -14,10 +14,9 @@ test = '0';
 
 ##================ Optimiseur ===============================================##
 options = option(100);
-options.quad = 1;
-options.verb = 2;
-options.save = 1;
-options.rl = 0;
+options.quad = 0;
+options.save = 0;
+options.rl = 1;
 
 
 if test == '0'	
