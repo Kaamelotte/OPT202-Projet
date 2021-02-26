@@ -18,30 +18,32 @@ function [alpha, nbSimul] = rl(x, lme, lmi, dir, simul, nbSimul, dphi, phi, opti
 ##        - nbSimul: nbre d'appel au simulateur apres la recherche lineaire
 #############################################################################
 
-
 	n = length(x);
 	me = length(lme);
 	mi = length(lmi);
 	
+    dk = dir(1:n);#directionn de descente pour x
+	lmPQ = dir(n+1:length(dir)); 
+	muk = lmPQ - [lme ; lmi ]; # direction de descente pour les lambda
+	
 	i = 0; #nb d'iterations de la RL
 	alpha = 1;
-	pente = omega * dot(dphi,dir); #omega.phi'(z_k).p_k	
+	pente = omega * dot(dphi,[dk;muk]); #omega.phi'(z_k).p_k	
 	
-    dk = dir(1:n);#directionn de descente pour x
-	lm = dir(n+1:length(dir)); # direction de descente pour les lambda
+	
 	
 	if options.verb == 2 ##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
 		fprintf("  Recherche lineaire d'Armijo: |d| = %.2e\n",norm(dir,inf));
-		fprintf('    Simul =%d, phi = %.5e, pente = %.5e\n\n',nbSimul, phi,pente);
+		fprintf('    Simul =%d, phi = %.5e, omega*pente = %.5e\n\n',nbSimul, phi,omega*pente);
 		fprintf('    %10s %15s %13s\n','alpha','phip-phi','DF(phi)');
 	end ##============================## 
 	
 ##=== Boucle sur i ============================================================##
 	while true
 		xp = x + alpha*dk; 			
-		lmep = lme + alpha*lm(1:me); #lambda_{k+1} = \lambda_k + \alpha * mu_k)
-		lmip =  lmi  + alpha*lm(me+1:me +mi);
+		lmep = lme + alpha*muk(1:me); #lambda_{k+1} = \lambda_k + \alpha * mu_k)
+		lmip =  lmi  + alpha*muk(me+1:me +mi);
 		
 		[~,cep,cip,gp,aep,aip,~,~] = simul(4,xp,lmep, lmip);
 		nbSimul += 1;
