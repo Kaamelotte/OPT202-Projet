@@ -1,4 +1,4 @@
-function [x,lme,info] = sqp(simul,x, lme, options)
+function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 ################################################################################
 ## sqp :
 ## Renvoie les multiplicateurs de Lagrange et les abscisses et ordonnees des  

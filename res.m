@@ -21,7 +21,7 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 		##=== Resolution par l'optimiseur ==========================================##
 		lmi = [];
 		if (options.quad == 0)
-			[x,lme, info] = sqp(@chs, xy, [], options);
+			[x,lme, lmi info] = sqp(@chs, xy, [], [], options);
 		else
 			[x, lme, lmi, info] = oqs(@chs, xy, [], [], options);
 		end;
@@ -36,7 +36,8 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 			color = color_res_2;
 			lgd = "Resultat_2";
 			chs(1, x, lme, lmi);
-			[x, lme, info] = sqp(@chs, xy, [], options);
+			
+			[x, lme, lmi, info] = sqp(@chs, xy, [], [], options);
 			lgd = "Resultat_1";
 			color = color_res_1;
 			chs(1, x, lme, lmi);
