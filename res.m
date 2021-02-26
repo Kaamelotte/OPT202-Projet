@@ -8,6 +8,10 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 		info.status = 1 % non choix de l'algorithme
 		return 
 	end ##====================================================================##
+
+	if options.saveLog == 1
+		diary(["res_", castest,"_",num2str(options.rl), ".txt"]);
+	end
 	
 	[L, xy, A, B, R, S] = casTest(castest);
 	##=== Graphe de l'initialisation ===========================================##
@@ -47,11 +51,13 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 		title({ ['Methode de Newton: cas test  ',castest]; ...
 			['Nbr Iterations: ', num2str(info.niter)]; "";"" });
 		
-		if options.save == 1 
+		if options.saveFig == 1 
 			print(["figure_", castest,"_",num2str(options.rl), ".jpg"]);  
 		end
 		hold off
-		##==========================================================================##		
+	
+	
+	##==========================================================================##		
 	L
   return
 end
