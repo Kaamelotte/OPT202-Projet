@@ -80,15 +80,14 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		if options.quad == 0 || options.rl == 0 ;
 			dF = [ hl, [ae;ai]' ; [ae; ai], zeros(me+mi,me+mi) ];
 			F = [ grdl ; [ce; ci] ];
-			Fpq = [ g ; [ce ; ci ] ];
-			F = Fpq;
+			#Fpq = [ g ; [ce ; ci ] ];
 		end ##=================================================================##
 		
 ##=== Calcul de la direction de descente =========================================##
 		if options.quad == 0 			##=== Algorithme de Newton ==========##
 			dir = -dF\F; #(dk,muk)
 			
-		elseif options.quad == 1		##=== Algorithme de Josephy-Newton nom ????? ===##
+		elseif options.quad == 1		##=== Algorithme de Josephy-Newton ===##
 			 [L, d, flag] = cholmod(hl, 1.e-5, 1.e+5);
 			 M = L*diag(d)*L';
 			 #[d, obj, information, lm] = qp (X0             , H, Q,  A,    B, LB, UB, A_LB, A_IN, A_UB)
