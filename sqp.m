@@ -51,8 +51,8 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
   
 	if (options.verb == 1)##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
-		fprintf('%4s %7s %10s %10s %10s %11s %9s %9s\n',...
-				'iter','|gl|','|ce|','|x|','|lme|','alpha','phi','Q');
+		fprintf('%4s %7s %10s %10s %10s %11s %9s\n',...
+				'iter','|gl|','|ce|','|x|','|lme|','alpha','Q');
 		fprintf('---------------------------------------------------------------------------------\n');
 	end##================##  
 
@@ -100,11 +100,10 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 				fprintf('%4s %7s %10s %10s %10s %11s %9s\n',...
 						'iter','|gl|','|ce|','|x|','|lme|','alpha','Q');
 			end;
-		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e\n',...
+		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e  \n',...
 				  info.niter, norm(grdl,inf),norm(ce,inf),norm(x,inf),norm(lme,inf),alpha,Q);
 		end ##================##    
 			
-	
 ##=== Recherche lineaire pour le pas alpha ======================================##
 		if options.rl == 0
 			#J'ai trouvé une petit place a ce petit chou
