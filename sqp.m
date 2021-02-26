@@ -94,7 +94,6 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 			 [dk, obj, information, lm] = qp (ones(n,1) , M,  g, ae, -ce, [] ,  [] ,     []  ,    ai  ,   -ci   );
 			if information.info != 0
 				info.status = information.info;
-				info.niter = information.niter
 				break;
 			end
 			dir = [dk; lm ];

@@ -1,4 +1,4 @@
-function [alpha, nbSimul] = rl(x, lme, lmi, dir, simul, nbSimul, dphi, phi, options, omega = 1e-4)
+function [alpha, nbSimul] = rl(x, lme, lmi, dir, simul, nbSimul, dphi, phi, options, nMax = 10, omega = 1e-4)
 #############################################################################
 ## rl :
 ## Renvoie le alpha optimal trouve par recherche lineaire
@@ -19,7 +19,7 @@ function [alpha, nbSimul] = rl(x, lme, lmi, dir, simul, nbSimul, dphi, phi, opti
 #############################################################################
 
 
-	n = length(x);x
+	n = length(x);
 	me = length(lme);
 	mi = length(lmi);
 	
@@ -50,27 +50,27 @@ function [alpha, nbSimul] = rl(x, lme, lmi, dir, simul, nbSimul, dphi, phi, opti
 		
 		Fp = [ grdlp ; [cep; cip] ]; # [ grad l ; c ] cf 2.3 TP2
         phip = 0.5 * Fp' * Fp; #0.5*||F(z_k + alpha_k.p_k)||^2}
-
-		if options.verb == 2 ##=== Impression ===##
-			fprintf('    %12.4e %14.5e %14.5e\n',alpha,phip-phi,(phip-phi)/alpha);
-		end ##============================## 
 		
 		##=== Test d'optimalite sur phi =======================================##
 		if phip <= phi + alpha*pente # (phip-phi)/alpha <= pente
 			break; #Sortie de Recherche lineaire
 		end ##===========================================================##
 		
+		if options.verb == 2 ##=== Impression ===##
+			fprintf('    %12.4e %14.5e %14.5e\n',alpha,phip-phi,(phip-phi)/alpha);
+		end ##============================## 
+		
 		alpha = alpha/2;
 		i = i+1;
 		##=== Test du nombre d'iterations deja effectuees ==========================##
-		if(i > 10)
+		if(i > nMax)
 			info.status = 3; #PB dans la RL
 			break; 
 		end ##==============================================================##
 	end
 ##=== Fin boucle i ============================================================##
 
-	if options.verb == 2 ##=== Impression ===##
+	if (i!= 0) && (options.verb == 2) ##=== Impression ===##
 		fprintf('  |gl| = %.3e, |ce| = %.3e\n',norm(grdlp,inf),norm(cep,inf));
 	end ##============================## 
 	
