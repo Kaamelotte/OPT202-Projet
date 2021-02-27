@@ -25,11 +25,7 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		return  
 	end ##===================================================================##
 
-	##=== Verification que l'utilisateur de demande pas plus d'info qu'il n'en veut ==========##
-	if options.rl == 1 && options.verb == 2
-		options.verb = 1;
-	end; ##===================================================================##
-	
+
 	##=== Calcul des multiplicateurs lagrangiens ====================================##
 	if length(lme) == 0 
 		    [~,~,~,g,ae,ai,~,indic] = chs(4,x,lme, lmi);
@@ -93,8 +89,7 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 				[L, d, flag] = cholmod(hl, 1.e-5, 1.e+5);
 				M = L*diag(d)*L';
 			elseif (info.niter == 0) &&(options.deriv == 1)
-				M = hl; # matrice initiale
-				M = eye(n);
+				M = eye(n);# matrice initiale
 			end
 			#[d, obj, information, lm] = qp (X0             , H, Q,  A,    B, LB, UB, A_LB, A_IN, A_UB)
 			[dk, obj, information, lm] = qp (ones(n,1) , M,  g, ae, -ce, [] ,  [] ,     []  ,    ai  ,   -ci   );
@@ -137,11 +132,13 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		lme = lme +  alpha*(lmePQ - lme);
 		lmi = lmi +  alpha*(lmiPQ -lmi);
 		
+		if (options.quad == 1) && (options.deriv == 1)
+			[M, info] = bfgs(simul, info, M, xm, lme, lmi, dir, grdl, options );
+		end
+		
 		info.niter = info.niter + 1;
 		##=====================================================================##
-		if (options.quad == 1) && (options.deriv == 1)
-			[M, info] = bfgs(simul, info, M, xm, lme, lmi, dir, alpha, grdl );
-		end
+
 		
 		
 		##=== Test du nombre d'iterations deja effectuees ==============================##
