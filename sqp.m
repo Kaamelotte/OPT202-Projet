@@ -44,10 +44,10 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 	##=======================================================================##
 
 	info.niter = 0;
-	nbSimul = 0;
+	info.nbSimul = 0;
 	alpha = 1;  #pas initial = pas unite
 	normFk = 1;
-	#grdlp = 1;
+	xm = x;
   
 	if (options.verb == 1) ##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
@@ -61,7 +61,7 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		#=== Mise a jour de donnees ===============================================##
 		[~,ce,ci,g,ae,ai,~,indic] = simul(4,x,lme, lmi);		
 		[~,~,~,~,~,~,hl,~] = simul(5,x,lme, lmi);
-		nbSimul += 2;
+		info.nbSimul += 2;
 		
 		grdl = g + [ae ; ai ]' * [lme ; lmi ];
 		
@@ -70,6 +70,7 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 			info.status = 0; #Solution trouvee
 			break; #Sortie de la boucle principale
 		end##==================================================================##
+		
 		
 		##=== Quotient des normes de Fk ===========================================##
 		normFkp = max(norm(ce,Inf),norm(grdl,Inf));
@@ -88,15 +89,23 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 			dir = -dF\FPQ; #(dk,lmpq)
 			
 		elseif options.quad == 1		##=== Algorithme de Josephy-Newton ===##
-			 [L, d, flag] = cholmod(hl, 1.e-5, 1.e+5);
-			 M = L*diag(d)*L';
-			 #[d, obj, information, lm] = qp (X0             , H, Q,  A,    B, LB, UB, A_LB, A_IN, A_UB)
-			 [dk, obj, information, lm] = qp (ones(n,1) , M,  g, ae, -ce, [] ,  [] ,     []  ,    ai  ,   -ci   );
+			if options.deriv == 2
+				[L, d, flag] = cholmod(hl, 1.e-5, 1.e+5);
+				M = L*diag(d)*L';
+			elseif (info.niter == 0) &&(options.deriv == 1)
+				M = hl; # matrice initiale
+				M = eye(n);
+			end
+			#[d, obj, information, lm] = qp (X0             , H, Q,  A,    B, LB, UB, A_LB, A_IN, A_UB)
+			[dk, obj, information, lm] = qp (ones(n,1) , M,  g, ae, -ce, [] ,  [] ,     []  ,    ai  ,   -ci   );
 			if information.info != 0
 				info.status = information.info;
-				break;
+				information.solveiter
+				break; #on sort de la boucle while principale
 			end
 			dir = [dk; lm ];
+			
+				
 		end
 		dk = dir(1:n);
 		lmePQ = dir(n+1:n+me);
@@ -118,18 +127,23 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		if options.rl == 0
 			phi = 0.5 * F' * F; #0.5*||F(z)||^2
 			dphi = F' * dF;     #F(z)^T*F'(z)
-			[alpha, nbSimul] = rl( x, lme, lmi, dir, simul, nbSimul, dphi, phi, options);
+			[alpha, info] = rl( x, lme, lmi, dir, simul, info, dphi, phi, options);
 		end 
 ##=== Fin recherche lineaire ====================================================##
 		
 		##=== Calcul des nouveaux parametres pour Newton ============================##
+		xm = x;
 		x = x + alpha*dk;
 		lme = lme +  alpha*(lmePQ - lme);
 		lmi = lmi +  alpha*(lmiPQ -lmi);
 		
 		info.niter = info.niter + 1;
 		##=====================================================================##
-
+		if (options.quad == 1) && (options.deriv == 1)
+			[M, info] = bfgs(simul, info, M, xm, lme, lmi, dir, alpha, grdl );
+		end
+		
+		
 		##=== Test du nombre d'iterations deja effectuees ==============================##
 		if(info.niter >= options.maxit)
 			info.status = 2; #Sortie de l'algo car pas de convergence

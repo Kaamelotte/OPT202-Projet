@@ -1,4 +1,4 @@
-function [alpha, nbSimul] = rl(x, lme, lmi, dir, simul, nbSimul, dphi, phi, options, nMax = 10, omega = 1e-4)
+function [alpha, info] = rl(x, lme, lmi, dir, simul, info, dphi, phi, options, nMax = 10, omega = 1e-4)
 #############################################################################
 ## rl :
 ## Renvoie le alpha optimal trouve par recherche lineaire
@@ -35,7 +35,7 @@ function [alpha, nbSimul] = rl(x, lme, lmi, dir, simul, nbSimul, dphi, phi, opti
 	if options.verb == 2 ##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
 		fprintf("  Recherche lineaire d'Armijo: |d| = %.2e\n",norm(dir,inf));
-		fprintf('    Simul =%d, phi = %.5e, omega*pente = %.5e\n\n',nbSimul, phi,omega*pente);
+		fprintf('    Simul =%d, phi = %.5e, omega*pente = %.5e\n\n',info.nbSimul, phi,omega*pente);
 		fprintf('    %10s %15s %13s\n','alpha','phip-phi','DF(phi)');
 	end ##============================## 
 	
@@ -46,7 +46,7 @@ function [alpha, nbSimul] = rl(x, lme, lmi, dir, simul, nbSimul, dphi, phi, opti
 		lmip =  lmi  + alpha*muk(me+1:me +mi);
 		
 		[~,cep,cip,gp,aep,aip,~,~] = simul(4,xp,lmep, lmip);
-		nbSimul += 1;
+		info.nbSimul += 1;
 		
 		grdlp = gp + [aep ; aip ]' * [lmep ; lmip ];
 		
