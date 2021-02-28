@@ -104,7 +104,6 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		lmiPQ = dirct(n+me+1:length(dirct));
         ##=====================================================================##
         figure(2)
-        subplot(121)
         hold off;
         chs(1,x,lme,lmi);
         hold on;
