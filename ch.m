@@ -1,4 +1,5 @@
 clear(); close(); clc();
+
 global A B L R S color lgd;
 color = 'r';  lgd = "resultat";
 ##=================== Cas test: ==============================================##
@@ -9,15 +10,15 @@ color = 'r';  lgd = "resultat";
 ## TP5:        '5a' '5b' '5c'
 ##=========================================================================##
 
-castest = '4a';
+castest = '4b';
 test = '0';
 
 ##================ Optimiseur ===============================================##
-options = option(100);
-options.quad = 0;
-options.save = 0;
+options = option(10);
+options.quad = 1;
+options.verb = 1;
+options.save = 1;
 options.rl = 1;
-
 
 if test == '0'	
 	[x, lme, lmi, info] = res(castest, options, color_res_1 = [0.6,0.3,0.6]);
@@ -70,6 +71,6 @@ if options.verb == 3 &&  test == '0'
 	fprintf('%.5f,',x(1:length(x)/2));
     fprintf("\n");
     fprintf('%.5f,',x(length(x)/2+1:length(x)))
-  fprintf('\n')
+    fprintf('\n')
 end;
 ##=========================================================================##

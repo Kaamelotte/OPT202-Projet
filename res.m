@@ -17,11 +17,11 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 	##=== Graphe de l'initialisation ===========================================##
 		figure('Name',['Methode de Newton: cas test ',castest]);
 		hold on;
-		chs(6, xy );
+		chs(6, xy );#dessine le plancher
 		color = color_init;
 		lgd = "Initialisation";
 		chs(1, xy);
-		#legend(plt, "Initialisation");
+
 		##=== Resolution par l'optimiseur ==========================================##
 		lmi = [];
 		if (options.quad == 0)
@@ -31,7 +31,7 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 		end;
 		
 		##=== Graphe de la solution ================================================##
-		
+		figure(1);
 		if(options.quad != 2)
 			lgd = "Resultat";
 			color = color_res_1;
@@ -54,7 +54,7 @@ function [x, lme, lmi, info, x2] = res(castest, options, ...
 		if options.saveFig == 1 
 			print(["figure_", castest,"_",num2str(options.rl), ".jpg"]);  
 		end
-		hold off
+		#hold off
 	
 	
 	##==========================================================================##		

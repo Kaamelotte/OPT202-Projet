@@ -17,7 +17,7 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 ##        - info : structure donnant des informations sur le comportement du solveur
 ##
 #############################################################################
-	  
+
 	##=== Verification de la consistance des arguments d'entree =======================##
 	n = length(x);
 	if mod(n,2) != 0
@@ -47,18 +47,18 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
   
 	if (options.verb == 1) ##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
-		fprintf('%4s %7s %10s %10s %10s %10s %10s %11s %9s\n',...
-				'iter','|gl|','|ce|','|ci|','|x|','|lme|','|lmi|','alpha','Q');
+		fprintf('%4s %7s %10s %10s %10s %10s %10s %11s\n',...
+				'iter','|gl|','|ce|','|ci|','|x|','|lme|','|lmi|','alpha');
 		fprintf('---------------------------------------------------------------------------------\n');
 	end ##==============================##  
 
 ##=== Boucle principale =======================================================##
 	while true
 		#=== Mise a jour de donnees ===============================================##
-		[~,ce,ci,g,ae,ai,~,indic] = simul(4,x,lme, lmi);		
+		[e,ce,ci,g,ae,ai,~,indic] = simul(4,x,lme, lmi);		
 		[~,~,~,~,~,~,hl,~] = simul(5,x,lme, lmi);
 		info.nbSimul += 2;
-		
+        
 		grdl = g + [ae ; ai ]' * [lme ; lmi ];
 		
 		##=== Test d'optimalite ===================================================##
@@ -80,10 +80,9 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 			FPQ = [ g ; [ce ; ci ] ];
 		end ##=================================================================##
 		
-##=== Calcul de la direction de descente =========================================##
+##=== Calcul de la dirctection de descente =========================================##
 		if options.quad == 0 			##=== Algorithme de Newton ==========##
-			dir = -dF\FPQ; #(dk,lmpq)
-			
+			dirct = -dF\FPQ; #(dk,lmpq)
 		elseif options.quad == 1		##=== Algorithme de Josephy-Newton ===##
 			if options.deriv == 2
 				[L, d, flag] = cholmod(hl, 1.e-5, 1.e+5);
@@ -98,31 +97,40 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 				information.solveiter
 				break; #on sort de la boucle while principale
 			end
-			dir = [dk; lm ];
-			
-				
+			dirct = [dk; lm ];
 		end
-		dk = dir(1:n);
-		lmePQ = dir(n+1:n+me);
-		lmiPQ = dir(n+me+1:length(dir));
-				
-##=== Fin calcul de la direction de descente =======================================##		
+        dk = dirct(1:n);
+		lmePQ = dirct(n+1:n+me);
+		lmiPQ = dirct(n+me+1:length(dirct));
+        ##=====================================================================##
+        figure(2)
+        subplot(121)
+        hold off;
+        chs(1,x,lme,lmi);
+        hold on;
+        chs(6,x,lme,lmi);
+        hold on;
+        quiver(x(1:n/2),x(n/2+1:n),dk(1:n/2),dk(n/2+1:n));
+        pause()
+        ##=====================================================================##
+
+##=== Fin calcul de la dirctection de descente =======================================##		
 			
 		if options.verb > 0 ##=== Impression ===##
 			if options.verb == 2			
 				fprintf('---------------------------------------------------------------------------------\n');
-				fprintf('%4s %7s %10s %10s %10s %10s %10s %11s %9s\n',...
-						'iter','|gl|','|ce|','|ci|','|x|','|lme|','|lmi|','alpha','Q');
+				fprintf('%4s %7s %10s %10s %10s %10s %10s %11s\n',...
+						'iter','|gl|','|ce|','|ci|','|x|','|lme|','|lmi|','alpha');
 			end;
-		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e  %10.4e  \n',...
-				  info.niter, norm(grdl,inf),norm(ce,inf),norm(ci,inf),norm(x,inf),norm(lme,inf),norm(lmi,inf), alpha,Q);
+		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e\n',...
+				  info.niter, norm(grdl,inf),norm(ce,inf),norm(ci,inf),norm(x,inf),norm(lme,inf),norm(lmi,inf), alpha);
 		end ##============================##    
 			
 ##=== Recherche lineaire pour le pas alpha ========================================##
 		if options.rl == 0
 			phi = 0.5 * F' * F; #0.5*||F(z)||^2
 			dphi = F' * dF;     #F(z)^T*F'(z)
-			[alpha, info] = rl( x, lme, lmi, dir, simul, info, dphi, phi, options);
+			[alpha, info] = rl( x, lme, lmi, dirct, simul, info, dphi, phi, options);
 		end 
 ##=== Fin recherche lineaire ====================================================##
 		
@@ -133,14 +141,12 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		lmi = lmi +  alpha*(lmiPQ -lmi);
 		
 		if (options.quad == 1) && (options.deriv == 1)
-			[M, info] = bfgs(simul, info, M, xm, lme, lmi, dir, grdl, options );
+			[M, info] = bfgs(simul, info, M, xm, lme, lmi, dirct, grdl, options );
 		end
 		
 		info.niter = info.niter + 1;
 		##=====================================================================##
 
-		
-		
 		##=== Test du nombre d'iterations deja effectuees ==============================##
 		if(info.niter >= options.maxit)
 			info.status = 2; #Sortie de l'algo car pas de convergence
@@ -155,6 +161,6 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 	if options.verb > 0 ##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
 	end ##============================## 
-
+    close(2);
 	return
 end  #Fin de la fonction

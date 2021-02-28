@@ -75,9 +75,6 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic, xy, lme = [], lmi = [])
 			    y(3) = y(4);
 			    fill(x,y,  [0.8 0.8 0.8], 'EdgeColor', [0.8 0.8 0.8], 'HandleVisibility','off')
 		    end;
-		  
-		    #axis ([xmin+0.5, xmax-0.5, ymin, ymax], "square");
-		    #axis off;
 	  end;
       indic = 0;
       return
