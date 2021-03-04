@@ -8,8 +8,8 @@ function [] = checker(castest, test = 1)
 		case '1'   
 			disp('trace de la chaine');
 			hold on;
+            chs(6,xy);
 			chs(1,xy);
-			chs(6,xy);
 			hold off;
 		case 'c'
 			disp("calcul de l'energie et des contraintes");
@@ -20,11 +20,17 @@ function [] = checker(castest, test = 1)
 			g
 			ae = full(ae)
 			ai = full(ai)
+    case 'grdl'
+        size_xy = size(xy)
+            [~,~,~,g,ae,ai,~,indic] = chs(4,xy);
+            size_g = size(g)
+            size_ae = size(ae)
+            size_ai = size(ai)
 		case 'hl' 	
 			disp("calcul du hessien du lagrangien");
 			[~,~,~,~,~,~,hl,indic] = chs(5,xy);
 			hl = full(hl)
-			valuerPropre = eig(hl)
+			valeurPropre = eig(hl)
 			sum(eig(hl)>= 0)/length(eig(hl)) 
 		case 'grad'
 			disp("verification du gradient de l'energie potentielle"); 

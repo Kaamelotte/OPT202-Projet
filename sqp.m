@@ -25,15 +25,18 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		return  
 	end ##===================================================================##
 
-
 	##=== Calcul des multiplicateurs lagrangiens ====================================##
-	if length(lme) == 0 
-		    [~,~,~,g,ae,ai,~,indic] = chs(4,x,lme, lmi);
-		    lme = -ae'\g;
-	end
-	if length(lmi) == 0
-		[~,~,~,g,ae,ai,~,indic] = chs(4,x,lme, lmi);
-		lmi = -ai'\g;
+	[~,ce,ci,g,ae,ai,~,indic] = chs(4,x,lme, lmi);
+    if length(lme) == 0 || (length(ai) > 0 && length(lmi) == 0)
+        me = size(ae)(1);       mi = size(ai)(1);         m = size([ae; ai])(1);
+        lm0 = zeros(m,1);       H = [ae;ai]*[ae;ai]';   q = [ae;ai]*g;
+        A = [zeros(1,me), ci']; b = 0;
+        lb = zeros(m,1);          ub = repmat(Inf,m,1);
+        A_lb = ci;                    A_in = zeros(mi,m);   A_ub = repmat(Inf,mi,1);
+	    #[lm, obj, information, l] = qp (lm0, H, q, A, b, lb, ub, A_lb, A_in, A_ub)
+        lm = -[ae; ai]' \ g
+        lme =  lm(1:me)
+        lmi = lm(me+1:m)
 	end
 	me = length(lme);
 	mi = length(lmi);
@@ -47,8 +50,8 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
   
 	if (options.verb == 1) ##=== Impression ===##
 		fprintf('---------------------------------------------------------------------------------\n');
-		fprintf('%4s %7s %10s %10s %10s %10s %10s %11s\n',...
-				'iter','|gl|','|ce|','|ci|','|x|','|lme|','|lmi|','alpha');
+		fprintf('%4s %7s %10s %10s %10s %10s %10s %11s %10s\n',...
+				'iter','|gl|','|ce|','|ci|','|x|','|lme|','|lmi|','alpha','|dirct|');
 		fprintf('---------------------------------------------------------------------------------\n');
 	end ##==============================##  
 
@@ -58,8 +61,8 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 		[e,ce,ci,g,ae,ai,~,indic] = simul(4,x,lme, lmi);		
 		[~,~,~,~,~,~,hl,~] = simul(5,x,lme, lmi);
 		info.nbSimul += 2;
-        
-		grdl = g + [ae ; ai ]' * [lme ; lmi ];
+
+		grdl = g + [ae ; ai ]' * [lme ; lmi ]
 		
 		##=== Test d'optimalite ===================================================##
 		if (norm(grdl,inf) < options.tol(1)) && (norm(ce,inf) < options.tol(2))  && (norm(min(lmi,-ci),inf) < options.tol(3) )
@@ -94,6 +97,7 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 			[dk, obj, information, lm] = qp (ones(n,1) , M,  g, ae, -ce, [] ,  [] ,     []  ,    ai  ,   -ci   );
 			if information.info != 0
 				info.status = information.info;
+                information
 				information.solveiter
 				break; #on sort de la boucle while principale
 			end
@@ -112,17 +116,16 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
         quiver(x(1:n/2),x(n/2+1:n),dk(1:n/2),dk(n/2+1:n));
         pause()
         ##=====================================================================##
-
 ##=== Fin calcul de la dirctection de descente =======================================##		
 			
 		if options.verb > 0 ##=== Impression ===##
 			if options.verb == 2			
-				fprintf('---------------------------------------------------------------------------------\n');
-				fprintf('%4s %7s %10s %10s %10s %10s %10s %11s\n',...
-						'iter','|gl|','|ce|','|ci|','|x|','|lme|','|lmi|','alpha');
+				fprintf('-------------------------------------------------------------------------------------------\n');
+				fprintf('%4s %7s %10s %10s %10s %10s %10s %11s %10s\n',...
+						'iter','|gl|','|ce|','|ci|','|x|','|lme|','|lmi|','alpha','|dirct|');
 			end;
-		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e\n',...
-				  info.niter, norm(grdl,inf),norm(ce,inf),norm(ci,inf),norm(x,inf),norm(lme,inf),norm(lmi,inf), alpha);
+		  fprintf('%4d %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e %10.4e\n',...
+				  info.niter, norm(grdl,inf),norm(ce,inf),norm(ci,inf),norm(x,inf),norm(lme,inf),norm(lmi,inf), alpha,norm(dirct,inf));
 		end ##============================##    
 			
 ##=== Recherche lineaire pour le pas alpha ========================================##
@@ -134,6 +137,9 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 ##=== Fin recherche lineaire ====================================================##
 		
 		##=== Calcul des nouveaux parametres pour Newton ============================##
+        if info.niter > 50
+            alpha = 0.5
+        end
 		xm = x;
 		x = x + alpha*dk;
 		lme = lme +  alpha*(lmePQ - lme);
@@ -158,8 +164,8 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 ##=== Fin Boucle principale ====================================================##
  
 	if options.verb > 0 ##=== Impression ===##
-		fprintf('---------------------------------------------------------------------------------\n');
+		fprintf('-------------------------------------------------------------------------------------------\n');
 	end ##============================## 
-    close(2);
+    #close();
 	return
 end  #Fin de la fonction
