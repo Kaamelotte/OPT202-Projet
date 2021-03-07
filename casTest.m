@@ -105,7 +105,8 @@ elseif numcas == '2b'
     #Longueurs des barres
     L = [0.1 0.2 0.3 0.4 0.5 0.4 0.3 0.1]';
     #Position initiale des noeuds 
-    xy = [];...à trouver
+	xy = [-0.05 -0.05 -0.05 -0.05  0.05  0.05  0.05 ...
+            0.05 0.1 0.25 0.45 0.4 0.2 0.05]';...à trouver
     A = 0.0;  B = 0.0;
     R = [-1.0; -0.2; -1.0];
     S = [-7.0;  0.0;  7.0];
