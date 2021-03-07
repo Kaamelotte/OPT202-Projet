@@ -21,7 +21,7 @@ function [M, info] = bfgs(simul, info, M, xm, lme, lmi, dir, grdl, options )
 	#correction de powel
 	gammaK = (1-theta) * M * delta + theta * gammaL;
 
-	if true ||(options.verb == 2) ##=== Impression ===##
+	if options.verb == 2 ##=== Impression ===##
 		fprintf('--------------------------------BFGS------------------------------------------------------\n');
 		fprintf('vap(M): ')
 		fprintf('%f ',eig(M)')

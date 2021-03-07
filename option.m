@@ -1,4 +1,4 @@
-function options = option(maxit = 10, quad = 1, verb = 1, deriv = 2, rl = 0, tol = [1.e-8,1.e-8,1.e-8], saveFig = 1, saveLog = 1 )
+function options = option(maxit = 50, quad = 1, verb = 1, deriv = 1, rl = 1, tol = [1.e-5,1.e-5,1.e-5], saveFig = 1, saveLog = 1 )
 	options.tol(1) = tol(1); # sur le gred du laplacien
 	options.tol(2) = tol(2); # sur les conditions d egalite
 	options.tol(3) = tol(3); # sur le min des multi de lagrange - les conditions d inegalite

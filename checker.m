@@ -9,7 +9,7 @@ function [] = checker(castest, test = 1)
 			disp('trace de la chaine');
 			hold on;
             chs(6,xy);
-			chs(1,xy);
+			#chs(1,xy);
 			hold off;
 		case 'c'
 			disp("calcul de l'energie et des contraintes");

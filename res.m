@@ -25,7 +25,7 @@ function [x, lme, lmi, info, x2] = res(castest, options,color_res_1 = [0.83,0.35
 		lmi = [];
 	    [x,lme, lmi info] = sqp(@chs, xy, [], [], options);
         
-        if options.verb == 5
+        if options.verb == 5 #=== Impression ===#
 	        disp("Calcul de la hessienne reduite")
 	        [e,ce,ci,g,ae,ai,~,indic] = chs(4,x,lme,[]);
 	        [~,~,~,~,~,~,hl,indic] = chs(5,x,lme,[]);
@@ -55,7 +55,7 @@ function [x, lme, lmi, info, x2] = res(castest, options,color_res_1 = [0.83,0.35
         end
 		##=== Graphe de la solution ================================================##
 		figure(1);
-		if(options.quad != 2)
+		if (options.quad != 2)
 			lgd = "Resultat";
 			color = color_res_1;
 			chs(1, x, lme, lmi);
