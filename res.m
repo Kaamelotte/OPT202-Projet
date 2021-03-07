@@ -13,6 +13,17 @@ function [x, lme, lmi, info, x2] = res(castest, options,color_res_1 = [0.83,0.35
 	end
 	
 	[L, xy, A, B, R, S] = casTest(castest);
+    
+    #nn = length(xy)/2;
+    #x = xy(1:nn);
+    #y = xy(nn+1:2*nn);
+    #xp = [x;A];
+    #xm = [0;x];
+    #yp = [y;B];
+    #ym = [0;y];
+    #Longueur = sqrt((xp-xm).^2 + (yp-ym).^2)
+    #L
+    
 	##=== Graphe de l'initialisation ===========================================##
     figure('Name',['Methode de Newton: cas test ',castest]);
     hold on;

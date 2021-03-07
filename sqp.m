@@ -33,10 +33,10 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
         A = [zeros(1,me), ci']; b = 0;
         lb = zeros(m,1);          ub = repmat(Inf,m,1);
         A_lb = ci;                    A_in = zeros(mi,m);   A_ub = repmat(Inf,mi,1);
-	    [lm, obj, information, l] = qp (lm0, H, q, A, b, lb, ub, A_lb, A_in, A_ub)
+	    [lm, obj, information, l] = qp (lm0, H, q, A, b, lb, ub, A_lb, A_in, A_ub);
         #lm = -[ae; ai]' \ g
-        lme =  lm(1:me)
-        lmi = lm(me+1:m)
+        lme =  lm(1:me);
+        lmi = lm(me+1:m);
     elseif length(lme) == 0
 	    lme = -ae'\g;
     end
@@ -85,12 +85,6 @@ function [x,lme, lmi, info] = sqp(simul,x, lme, lmi, options)
 			elseif (info.niter == 0) &&(options.deriv == 1)
 				M = eye(n); # matrice initiale
 			end
-            M
-            g
-            ae = full(ae)
-            ce
-            ai = full(ai)
-            ci
 			#[d, obj, information, lm] = qp (X0            , H, Q,  A,    B, LB, UB, A_LB, A_IN, A_UB)
 			[dk, obj, information, lm] = qp (zeros(n,1), M,  g, ae, -ce, [] ,  [] ,     []  ,    ai  ,   -ci   );
 			if information.info != 0
