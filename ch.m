@@ -11,7 +11,7 @@ color = 'r';  lgd = "resultat";
 ##=========================================================================##
 
 castest = '5c';
-test = '1';
+test = '0';
 options = option(100);
 options.verb ==1
 

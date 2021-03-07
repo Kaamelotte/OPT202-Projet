@@ -55,10 +55,8 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic, xy, lme = [], lmi = [])
         #calcul des limites de la figure
 		if length(R) != 0
 			d = 1;
-		    xmin = min([0;xp]) -d;
-		    xmax = max([xm;A]) +d;
-		    ymin = min([0;yp])-d;
-		    ymax = max([ym;A])+d ;
+		    xmin =- d;
+		    xmax = d;
 		    #		   A
 		    #           x
 		    #          |  \
@@ -68,12 +66,13 @@ function [e,ce,ci,g,ae,ai,hl,indic] = chs(indic, xy, lme = [], lmi = [])
 		    #			|		|	
 		    #		C	x___x D	  
 		    x = [ xmin ; xmax ; xmax ; xmin]; # ( A, B , C , D )
-		    shift = [ 0; 0; 2; 2 ];
+		    shift = [ 0; 0; 20*d; 20*d ];
 		 
 		    for i = 1:length(R)
 			    y = (R(i) + S(i)*x )- shift;
-			    y(3) = y(4);
+			    #y(3) = y(4);
 			    fill(x,y,  [0.8 0.8 0.8], 'EdgeColor', [0.8 0.8 0.8], 'HandleVisibility','off')
+				#plot(x,y)
 		    end;
 	  end;
       indic = 0;
